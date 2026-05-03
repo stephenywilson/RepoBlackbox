@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" role="img" aria-label="RepoBlackbox terminal demo">
   <title>RepoBlackbox terminal demo</title>
-  <defs>
-    <clipPath id="card-clip">
-      <rect x="10" y="10" width="940" height="500" rx="10"/>
-    </clipPath>
-  </defs>
 
   <!-- Page background -->
   <rect width="960" height="520" fill="#0d1117"/>
@@ -12,11 +7,17 @@
   <!-- Card background -->
   <rect x="10" y="10" width="940" height="500" rx="10" fill="#161b22"/>
 
-  <!-- Title bar (clipped so top corners are rounded by the card) -->
-  <rect x="10" y="10" width="940" height="46" fill="#21262d" clip-path="url(#card-clip)"/>
+  <!-- Title bar: two rects — the first has rx=10 (all corners rounded),
+       the second squares off the bottom two corners.
+       No clipPath needed; GitHub strips defs/clipPath which breaks rendering. -->
+  <rect x="10" y="10" width="940" height="46" rx="10" fill="#21262d"/>
+  <rect x="10" y="46" width="940" height="10" fill="#21262d"/>
 
-  <!-- Title bar bottom border -->
-  <line x1="10" y1="56" x2="950" y2="56" stroke="#30363d" stroke-width="1"/>
+  <!-- Divider below title bar -->
+  <rect x="10" y="55" width="940" height="1" fill="#30363d"/>
+
+  <!-- Card border -->
+  <rect x="10" y="10" width="940" height="500" rx="10" fill="none" stroke="#30363d" stroke-width="1"/>
 
   <!-- Window control dots -->
   <circle cx="37" cy="33" r="6" fill="#ff5f57"/>
@@ -26,64 +27,38 @@
   <!-- Window title -->
   <text x="480" y="33" font-family="monospace" font-size="12" fill="#8b949e" text-anchor="middle" dominant-baseline="middle">RepoBlackbox — demo</text>
 
-  <!-- Card border -->
-  <rect x="10" y="10" width="940" height="500" rx="10" fill="none" stroke="#30363d" stroke-width="1"/>
+  <!-- ============================================================
+       Content — font-size 15 · line-height ~22px
+       Block gaps: 40px between command groups
+       ============================================================ -->
 
-  <!-- ════════════════════════════════════════════ -->
-  <!-- Content — font-size 15, line-height ~22px   -->
-  <!-- ════════════════════════════════════════════ -->
+  <!-- ── Block 1: scope ──────────────────────────────────────── -->
 
-  <!-- ── Block 1: scope ─────────────────────────── -->
+  <text x="32" y="86"  font-family="monospace" font-size="15"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox scope --task </tspan><tspan fill="#a5d6ff">"Refactor homepage hero"</tspan><tspan fill="#c9d1d9"> \</tspan></text>
+  <text x="32" y="108" font-family="monospace" font-size="15"><tspan fill="#c9d1d9">    --allow </tspan><tspan fill="#a5d6ff">"src/components/home/**"</tspan><tspan fill="#c9d1d9"> --forbid </tspan><tspan fill="#a5d6ff">".env,package.json"</tspan></text>
+  <text x="32" y="130" font-family="monospace" font-size="15"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Scope saved to TASK_SCOPE.md</tspan></text>
+  <text x="32" y="152" font-family="monospace" font-size="15"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Machine-readable scope saved (.repoblackbox/runs/latest-scope.json)</tspan></text>
 
-  <!-- $ repoblackbox scope --task "..." \ -->
-  <text x="32" y="86" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#58a6ff">$</tspan><tspan fill="#e6edf3"> repoblackbox scope --task </tspan><tspan fill="#a5d6ff">"Refactor homepage hero"</tspan><tspan fill="#e6edf3"> \</tspan></text>
+  <!-- ── Block 2: snapshot ───────────────────────────────────── -->
 
-  <!-- continuation: --allow ... --forbid ... -->
-  <text x="32" y="108" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#e6edf3">    --allow </tspan><tspan fill="#a5d6ff">"src/components/home/**"</tspan><tspan fill="#e6edf3"> --forbid </tspan><tspan fill="#a5d6ff">".env,package.json"</tspan></text>
+  <text x="32" y="196" font-family="monospace" font-size="15"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox snapshot </tspan><tspan fill="#a5d6ff">"before claude task"</tspan></text>
+  <text x="32" y="218" font-family="monospace" font-size="15"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Snapshot captured  (42 files hashed)</tspan></text>
+  <text x="32" y="240" font-family="monospace" font-size="15"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Sensitive files recorded without reading contents</tspan></text>
 
-  <!-- ✔ Scope saved to TASK_SCOPE.md -->
-  <text x="32" y="130" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Scope saved to TASK_SCOPE.md</tspan></text>
+  <!-- ── Block 3: audit ─────────────────────────────────────── -->
 
-  <!-- ✔ Machine-readable scope saved -->
-  <text x="32" y="152" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Machine-readable scope saved (.repoblackbox/runs/latest-scope.json)</tspan></text>
+  <text x="32" y="284" font-family="monospace" font-size="15"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox audit</tspan></text>
 
-  <!-- ── Block 2: snapshot ───────────────────────── -->
+  <text x="32" y="316" font-family="monospace" font-size="15" font-weight="bold"><tspan fill="#c9d1d9">  Changes</tspan></text>
+  <text x="32" y="338" font-family="monospace" font-size="15"><tspan fill="#8b949e">    Added    </tspan><tspan fill="#3fb950">(1)</tspan><tspan fill="#8b949e">:  </tspan><tspan fill="#79c0ff">src/components/home/Hero.tsx</tspan></text>
+  <text x="32" y="360" font-family="monospace" font-size="15"><tspan fill="#8b949e">    Modified </tspan><tspan fill="#d29922">(1)</tspan><tspan fill="#8b949e">:  </tspan><tspan fill="#f85149">package.json</tspan></text>
 
-  <!-- $ repoblackbox snapshot "before claude task" -->
-  <text x="32" y="192" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#58a6ff">$</tspan><tspan fill="#e6edf3"> repoblackbox snapshot </tspan><tspan fill="#a5d6ff">"before claude task"</tspan></text>
+  <text x="32" y="392" font-family="monospace" font-size="15"><tspan fill="#d29922">  ⚠</tspan><tspan fill="#c9d1d9">  Scope violation: </tspan><tspan fill="#f85149">package.json</tspan><tspan fill="#c9d1d9"> matches forbidden pattern</tspan></text>
+  <text x="32" y="420" font-family="monospace" font-size="15"><tspan fill="#c9d1d9">  Risk Level: </tspan><tspan fill="#f85149" font-weight="bold">HIGH</tspan></text>
 
-  <!-- ✔ Snapshot captured -->
-  <text x="32" y="214" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Snapshot captured  (42 files hashed)</tspan></text>
+  <!-- ── Block 4: report ────────────────────────────────────── -->
 
-  <!-- ✔ Sensitive files recorded -->
-  <text x="32" y="236" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Sensitive files recorded without reading contents</tspan></text>
-
-  <!-- ── Block 3: audit ──────────────────────────── -->
-
-  <!-- $ repoblackbox audit -->
-  <text x="32" y="276" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#58a6ff">$</tspan><tspan fill="#e6edf3"> repoblackbox audit</tspan></text>
-
-  <!-- Changes header -->
-  <text x="32" y="308" font-family="monospace" font-size="15" font-weight="bold" xml:space="preserve"><tspan fill="#e6edf3">  Changes</tspan></text>
-
-  <!-- Added (1): src/components/home/Hero.tsx -->
-  <text x="32" y="330" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#8b949e">    Added    </tspan><tspan fill="#3fb950">(1)</tspan><tspan fill="#8b949e">:  </tspan><tspan fill="#79c0ff">src/components/home/Hero.tsx</tspan></text>
-
-  <!-- Modified (1): package.json (red — it's forbidden) -->
-  <text x="32" y="352" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#8b949e">    Modified </tspan><tspan fill="#d29922">(1)</tspan><tspan fill="#8b949e">:  </tspan><tspan fill="#f85149">package.json</tspan></text>
-
-  <!-- ⚠ Scope violation -->
-  <text x="32" y="384" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#d29922">  ⚠</tspan><tspan fill="#e6edf3">  Scope violation: </tspan><tspan fill="#f85149">package.json</tspan><tspan fill="#e6edf3"> matches forbidden pattern</tspan></text>
-
-  <!-- Risk Level: HIGH -->
-  <text x="32" y="414" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#e6edf3">  Risk Level: </tspan><tspan fill="#f85149" font-weight="bold">HIGH</tspan></text>
-
-  <!-- ── Block 4: report ─────────────────────────── -->
-
-  <!-- $ repoblackbox report -->
-  <text x="32" y="454" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#58a6ff">$</tspan><tspan fill="#e6edf3"> repoblackbox report</tspan></text>
-
-  <!-- ✔ Report saved -->
-  <text x="32" y="476" font-family="monospace" font-size="15" xml:space="preserve"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Report saved to </tspan><tspan fill="#79c0ff">.repoblackbox/reports/latest-report.md</tspan></text>
+  <text x="32" y="462" font-family="monospace" font-size="15"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox report</tspan></text>
+  <text x="32" y="484" font-family="monospace" font-size="15"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Report saved to </tspan><tspan fill="#79c0ff">.repoblackbox/reports/latest-report.md</tspan></text>
 
 </svg>
