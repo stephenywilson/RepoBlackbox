@@ -7,6 +7,8 @@ RepoBlackbox is a lightweight safety layer for Claude Code, Codex, Cursor, Copil
 Before the agent edits your repo, define the task scope and capture a snapshot.  
 After the agent edits your repo, audit what changed and generate a review report.
 
+![RepoBlackbox terminal demo](docs/assets/repoblackbox-demo.svg)
+
 ---
 
 ## What is RepoBlackbox?
@@ -334,7 +336,7 @@ You can customize the protected list in `.repoblackbox/protected-files.json`.
 
 ---
 
-## What v0.1 Does
+## What v0.1.x Does
 
 - `init` — create config and safety documents
 - `scope` — define task boundaries (interactive or flag-based); saves machine-readable JSON for audit
