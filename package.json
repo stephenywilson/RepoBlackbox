@@ -1,0 +1,35 @@
+{
+  "name": "repoblackbox",
+  "version": "0.1.1",
+  "description": "A lightweight safety layer for AI coding agents — Claude Code, Codex, Cursor, Copilot, and more.",
+  "keywords": ["ai", "coding", "agent", "safety", "claude", "codex", "cursor", "cli", "devtools"],
+  "author": "Catalayer AI",
+  "license": "Apache-2.0",
+  "bin": {
+    "repoblackbox": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "chmod +x dist/cli.js",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "smoke": "bash scripts/smoke-test.sh"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "LICENSE",
+    "README.md"
+  ]
+}

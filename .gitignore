@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.DS_Store
+
+# RepoBlackbox local data — add this to your own project's .gitignore too
+.repoblackbox/
