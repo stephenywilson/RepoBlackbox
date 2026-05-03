@@ -11,8 +11,8 @@ RepoBlackbox is a lightweight CLI safety layer for AI coding agents. Contributio
 **Requirements:** Node.js >= 18
 
 ```bash
-git clone https://github.com/catalayer/repoblackbox
-cd repoblackbox
+git clone https://github.com/stephenywilson/RepoBlackbox
+cd RepoBlackbox
 npm install
 npm run build
 ```
@@ -104,7 +104,7 @@ docs/                 — documentation
 
 ## Opening Issues
 
-Use [GitHub Issues](https://github.com/catalayer/repoblackbox/issues) for:
+Use [GitHub Issues](https://github.com/stephenywilson/RepoBlackbox/issues) for:
 - Bug reports (include OS, Node version, command run, and output)
 - Feature requests (describe the AI coding workflow problem it solves)
 - Documentation gaps

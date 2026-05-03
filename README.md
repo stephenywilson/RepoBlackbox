@@ -90,26 +90,41 @@ Without boundaries, even a well-intentioned agent can cause cascading damage. No
 
 ## Quick Start
 
+RepoBlackbox is currently available from source. npm installation will be added after the first npm release.
+
+### Install from source
+
 ```bash
-# Install globally (once published on npm)
-npm install -g repoblackbox
+git clone https://github.com/stephenywilson/RepoBlackbox
+cd RepoBlackbox
+npm install
+npm run build
+npm link
+repoblackbox --help
+```
 
-# Or link locally from this repo
-git clone https://github.com/catalayer/repoblackbox
-cd repoblackbox && npm install && npm run build && npm link
+### Use in your project
 
-# In your project directory:
+```bash
+cd /path/to/your/project
+
 repoblackbox init
-repoblackbox scope --task "Add dark mode toggle" \
-  --allow "src/components/ThemeToggle.tsx,src/styles/theme.css" \
-  --forbid ".env,package.json,src/lib/auth/**"
-repoblackbox snapshot "before dark mode toggle"
 
-# → Give the AI agent its task now
+repoblackbox scope \
+  --task "Refactor homepage hero" \
+  --allow "src/components/home/**,src/styles/theme.css,src/styles/tokens.css" \
+  --forbid ".env,package.json,src/lib/auth/**" \
+  --success "Hero renders correctly, navigation unchanged, build passes"
+
+repoblackbox snapshot "before claude task"
+
+# Run Claude Code / Codex / Cursor
 
 repoblackbox audit
 repoblackbox report
 ```
+
+> After npm release: `npm install -g repoblackbox`
 
 ---
 

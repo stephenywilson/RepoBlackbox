@@ -85,8 +85,8 @@ After the agent edits your repo, audit what changed and generate a review report
 ### Install (local)
 
 ```bash
-git clone https://github.com/catalayer/repoblackbox
-cd repoblackbox
+git clone https://github.com/stephenywilson/RepoBlackbox
+cd RepoBlackbox
 npm install && npm run build && npm link
 repoblackbox --help
 ```
