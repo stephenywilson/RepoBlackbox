@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stephenywilson/RepoBlackbox.git"
+    "url": "git+https://github.com/stephenywilson/RepoBlackbox.git"
   },
   "homepage": "https://github.com/stephenywilson/RepoBlackbox#readme",
   "bugs": {
