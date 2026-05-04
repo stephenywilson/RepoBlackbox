@@ -167,8 +167,15 @@ Without boundaries, even a well-intentioned agent can cause cascading damage. No
 ### Install
 
 ```bash
-npm install -g repoblackbox
+git clone https://github.com/stephenywilson/RepoBlackbox
+cd RepoBlackbox
+npm install
+npm run build
+npm link
+repoblackbox --help
 ```
+
+> npm installation will be available after the first npm release.
 
 ### Use in your project
 
@@ -188,17 +195,6 @@ repoblackbox snapshot "before claude task"
 
 repoblackbox audit
 repoblackbox report
-```
-
-### Development install
-
-To build and run RepoBlackbox from source:
-
-```bash
-git clone https://github.com/stephenywilson/RepoBlackbox
-cd RepoBlackbox
-npm install && npm run build && npm link
-repoblackbox --help
 ```
 
 ---
