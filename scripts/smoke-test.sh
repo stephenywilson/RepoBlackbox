@@ -16,7 +16,7 @@ trap cleanup EXIT
 
 echo ""
 echo "══════════════════════════════════════════════"
-echo "  RepoBlackbox Smoke Test  (v0.2.0)"
+echo "  RepoBlackbox Smoke Test  (v0.3.0)"
 echo "══════════════════════════════════════════════"
 
 # ── 1. Setup ──────────────────────────────────────
@@ -140,10 +140,10 @@ $RBB init --force > /dev/null
 pass "init --force: idempotent"
 
 # ── 10. CLI version ───────────────────────────────
-section "10. CLI version reports 0.2.0"
+section "10. CLI version reports 0.3.0"
 VERSION_OUT="$($RBB --version)"
-[ "$VERSION_OUT" = "0.2.0" ] || fail "version is '$VERSION_OUT', expected '0.2.0'"
-pass "version: 0.2.0"
+[ "$VERSION_OUT" = "0.3.0" ] || fail "version is '$VERSION_OUT', expected '0.3.0'"
+pass "version: 0.3.0"
 
 # ── 11. bench list ─────────────────────────────────
 section "11. bench list shows all 5 tasks"
@@ -207,6 +207,52 @@ grep -q "No API keys" /tmp/rbb-bench-demo-$$.log \
   || fail "bench demo did not create a report"
 rm -rf "$DEMO_DIR" /tmp/rbb-bench-demo-$$.log
 pass "bench demo: completed without API keys"
+
+# ── 17. skill list ─────────────────────────────────
+section "17. skill list shows all 10 skills"
+SKILL_LIST="$($RBB skill list 2>&1)"
+for skill in github-release-polish readme-audit repo-url-fix security-privacy-scan \
+             npm-package-release-check python-package-release-check cli-smoke-test \
+             changelog-update ui-screenshot-audit agent-safe-refactor; do
+  echo "$SKILL_LIST" | grep -q "$skill" || fail "skill list missing: $skill"
+done
+pass "skill list: all 10 skills present"
+
+# ── 18. skill show ─────────────────────────────────
+section "18. skill show readme-audit"
+SHOW_OUT="$($RBB skill show readme-audit 2>&1)"
+echo "$SHOW_OUT" | grep -qi "readme" || fail "skill show missing title"
+echo "$SHOW_OUT" | grep -qi "Required vars" || fail "skill show missing Required vars"
+pass "skill show: metadata displayed"
+
+# ── 19. skill use with variables ───────────────────
+section "19. skill use github-release-polish with required vars"
+USE_OUT="$($RBB skill use github-release-polish \
+  --var project_path=/tmp/demo-repo \
+  --var repo_url=https://github.com/example/demo \
+  --var version=0.3.0 2>&1)"
+echo "$USE_OUT" | grep -q "/tmp/demo-repo" || fail "variable project_path not substituted"
+echo "$USE_OUT" | grep -q "0.3.0"          || fail "variable version not substituted"
+echo "$USE_OUT" | grep -q "example/demo"   || fail "variable repo_url not substituted"
+pass "skill use: variables substituted correctly"
+
+# ── 20. skill use --output ─────────────────────────
+section "20. skill use --output writes to file"
+SKILL_OUT_FILE="/tmp/rbb-skill-out-$$.md"
+$RBB skill use readme-audit \
+  --var project_path=/tmp/demo-proj \
+  --var repo_url=https://github.com/example/demo \
+  --output "$SKILL_OUT_FILE" > /dev/null
+[ -f "$SKILL_OUT_FILE" ] || fail "output file not created"
+grep -q "/tmp/demo-proj" "$SKILL_OUT_FILE" || fail "variable not in output file"
+rm -f "$SKILL_OUT_FILE"
+pass "skill use --output: file written with substituted variables"
+
+# ── 21. skill use missing required var fails ────────
+section "21. skill use missing required variable exits non-zero"
+$RBB skill use github-release-polish --var project_path=/tmp/x > /dev/null 2>&1 \
+  && fail "missing required vars should exit non-zero" || true
+pass "skill use: missing required variable exits non-zero"
 
 echo ""
 echo "══════════════════════════════════════════════"

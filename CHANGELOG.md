@@ -7,6 +7,45 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [0.3.0] — 2026-05-04
+
+### Added
+- **Agent Skill Packs** — structured workflow prompts for AI coding agents
+- New command group: `repoblackbox skill list / show / use`
+- 10 built-in skills:
+  - `github-release-polish` — prepare an open-source repo for a GitHub release
+  - `readme-audit` — audit a README for clarity and install accuracy
+  - `repo-url-fix` — fix wrong repo URLs after a rename or ownership change
+  - `security-privacy-scan` — scan for private paths, API keys, and internal references
+  - `npm-package-release-check` — prepare a Node/TS CLI for npm publishing (no publish)
+  - `python-package-release-check` — prepare a Python CLI for PyPI release (no publish)
+  - `cli-smoke-test` — add or improve a CLI smoke test
+  - `changelog-update` — update CHANGELOG for a new version
+  - `ui-screenshot-audit` — generate targeted polish from UI screenshots
+  - `agent-safe-refactor` — constrained refactor with explicit allowed/forbidden files
+- Variable substitution via `--var key=value` (repeatable)
+- `--output <file>` support to write rendered prompts to disk
+- Lightweight YAML frontmatter parser — no external dependencies
+- `docs/agent-skill-packs.md` — full reference for skill format, variables, and examples
+- `skills/` directory shipped with the npm package
+
+### Changed
+- Project positioning extended to **"safety, evaluation, and workflow layer"** for AI coding agents
+- `package.json` description, keywords, and CLI description updated accordingly
+- `package.json` version bumped to 0.3.0
+- `package.json` files field includes `skills/`
+- README extended with Agent Skill Packs section
+- README commands table includes `skill list / show / use`
+- README roadmap updated
+
+### Notes
+- All v0.1.x and v0.2.x behavior preserved — `init`, `scope`, `snapshot`, `audit`, `report`, and `bench` unchanged
+- No API calls, no external services, no telemetry
+- RepoBlackbox **never** runs AI agents automatically — it only renders prompt text
+- `skill use` prints or writes text; it does not execute prompts
+
+---
+
 ## [0.2.0] — 2026-05-04
 
 ### Added

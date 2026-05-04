@@ -6,9 +6,11 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](package.json)
 
-RepoBlackbox is a lightweight CLI **safety and evaluation layer** for Claude Code, Codex, Cursor, Copilot, and other AI coding agents. It wraps each AI coding session with scope definition, a repo snapshot, a post-run audit, and a Markdown report — so you always know exactly what the agent changed and whether it stayed within bounds.
+RepoBlackbox is a lightweight CLI **safety, evaluation, and workflow layer** for Claude Code, Codex, Cursor, Copilot, and other AI coding agents. It wraps each AI coding session with scope definition, a repo snapshot, a post-run audit, and a Markdown report — so you always know exactly what the agent changed and whether it stayed within bounds.
 
-v0.2 also adds **Agent Task Bench**: built-in local benchmark tasks for evaluating whether an AI coding agent can complete realistic repo-maintenance tasks safely. No API keys required.
+v0.2 adds **Agent Task Bench**: local benchmark tasks for evaluating whether an AI coding agent can complete realistic repo-maintenance tasks safely. No API keys required.
+
+v0.3 adds **Agent Skill Packs**: structured, copy-paste-ready workflow prompts for Claude Code, Codex, Cursor, Copilot, and other AI coding agents. No API keys required.
 
 It does not replace Git. It adds an AI-agent-specific workflow on top of Git so you catch scope violations and risky edits before you commit.
 
@@ -80,6 +82,49 @@ Key properties:
 - Useful for testing Claude Code, Codex, Cursor, Copilot, and other AI coding agents.
 
 See [docs/agent-task-bench.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-task-bench.md) for the full reference.
+
+---
+
+## Agent Skill Packs
+
+RepoBlackbox v0.3 includes structured workflow skills — copy-paste-ready task prompts for AI coding agents, with variable substitution.
+
+```bash
+repoblackbox skill list                                   # list built-in skills
+repoblackbox skill show readme-audit                      # show metadata and preview
+repoblackbox skill use github-release-polish \
+  --var project_path=/path/to/repo \
+  --var repo_url=https://github.com/user/repo \
+  --var version=0.3.0                                     # render to stdout
+repoblackbox skill use readme-audit \
+  --var project_path=/path/to/repo \
+  --var repo_url=https://github.com/user/repo \
+  --output .repoblackbox/skills/readme-audit.md           # render to file
+```
+
+Built-in skills (v0.3):
+
+| Skill | Purpose |
+|---|---|
+| `github-release-polish` | Prepare an open-source repo for a GitHub release |
+| `readme-audit` | Audit a README for install accuracy and copy-paste correctness |
+| `repo-url-fix` | Fix wrong repo URLs after a rename or ownership change |
+| `security-privacy-scan` | Scan for private paths, API keys, and internal project references |
+| `npm-package-release-check` | Prepare a Node/TS CLI for npm publishing (no publish) |
+| `python-package-release-check` | Prepare a Python CLI for PyPI release (no publish) |
+| `cli-smoke-test` | Add or improve a CLI smoke test |
+| `changelog-update` | Update CHANGELOG for a new version |
+| `ui-screenshot-audit` | Generate targeted polish instructions from UI screenshots |
+| `agent-safe-refactor` | Guide a constrained refactor with explicit allowed/forbidden files |
+
+Key properties:
+
+- **RepoBlackbox does not run AI agents automatically.** `skill use` only renders prompt text.
+- **No API keys required.** Skills are local Markdown files with variable substitution.
+- **No model providers are called.** Paste the output into Claude Code / Codex / Cursor yourself.
+- Useful for Claude Code, Codex, Cursor, Copilot, and other AI coding agents.
+
+See [docs/agent-skill-packs.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-skill-packs.md) for the full reference.
 
 ---
 
@@ -419,6 +464,9 @@ You can customize the protected list in `.repoblackbox/protected-files.json`.
 | `repoblackbox bench score <task>` | Run deterministic checks against the workspace (v0.2) |
 | `repoblackbox bench report <task>` | Generate a Markdown bench report (v0.2) |
 | `repoblackbox bench demo` | Self-contained demonstration, no AI required (v0.2) |
+| `repoblackbox skill list` | List built-in Agent Skill Packs (v0.3) |
+| `repoblackbox skill show <skill>` | Show skill metadata and prompt preview (v0.3) |
+| `repoblackbox skill use <skill>` | Render a skill prompt with `--var` substitutions (v0.3) |
 
 **RepoBlackbox does not do:**
 
@@ -434,20 +482,20 @@ You can customize the protected list in `.repoblackbox/protected-files.json`.
 
 ## Roadmap
 
-### v0.2.0 (current)
-- Everything in v0.1.x: `init`, `scope`, `snapshot`, `audit`, `report`
-- **Agent Task Bench**: `bench list / prepare / score / report / demo`
-- 5 built-in benchmark tasks (`readme-url-fix`, `package-version-sync`, `docs-toc-update`, `security-cleanup`, `forbidden-file-guard`)
-- Deterministic local scoring with 8 check types — no AI, no API keys
-- Markdown and JSON bench reports
+### v0.3.0 (current)
+- Everything in v0.1.x and v0.2.x
+- **Agent Skill Packs**: `skill list / show / use`
+- 10 built-in workflow skills (`github-release-polish`, `readme-audit`, `repo-url-fix`, `security-privacy-scan`, `npm-package-release-check`, `python-package-release-check`, `cli-smoke-test`, `changelog-update`, `ui-screenshot-audit`, `agent-safe-refactor`)
+- Variable substitution via `--var key=value`
+- `--output <file>` support for writing rendered prompts
 
 ### Future
 - Safer rollback workflow
 - GitHub PR comment support
 - CI mode (exit code based on risk level)
-- More built-in benchmark tasks
+- Custom skill directory support
+- More built-in benchmark tasks and skills
 - Project presets (Next.js, Remix, SvelteKit, etc.)
-- Claude Code / Cursor / Codex workflow presets
 - HTML report output
 
 ---
@@ -472,6 +520,7 @@ The report is your flight log.
 |---|---|
 | [docs/example-workflow.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/example-workflow.md) | Full step-by-step workflow with real command output |
 | [docs/agent-task-bench.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-task-bench.md) | Agent Task Bench — task format, check types, scoring, custom tasks |
+| [docs/agent-skill-packs.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-skill-packs.md) | Agent Skill Packs — skill format, variables, built-in skills, custom skills |
 | [docs/risk-model.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/risk-model.md) | How LOW / MEDIUM / HIGH are determined, scope violations, out-of-scope |
 | [docs/ai-agent-rules.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/ai-agent-rules.md) | How the four safety documents work, Claude Code / Cursor / Codex integration |
 | [examples/unsafe-agent-run/](examples/unsafe-agent-run/README.md) | End-to-end example: agent touches forbidden file, audit flags HIGH |

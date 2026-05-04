@@ -7,6 +7,7 @@ import { runSnapshot } from './commands/snapshot';
 import { runAudit } from './commands/audit';
 import { runReport } from './commands/report';
 import { registerBenchCommand } from './commands/bench';
+import { registerSkillCommand } from './commands/skill';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require('../package.json') as { version: string };
@@ -15,7 +16,7 @@ const program = new Command();
 
 program
   .name('repoblackbox')
-  .description('Safety and evaluation layer for AI coding agents.')
+  .description('Safety, evaluation, and workflow layer for AI coding agents.')
   .version(version);
 
 program
@@ -60,5 +61,8 @@ program
 
 // v0.2: Agent Task Bench
 registerBenchCommand(program);
+
+// v0.3: Agent Skill Packs
+registerSkillCommand(program);
 
 program.parse(process.argv);
