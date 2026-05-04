@@ -1,18 +1,23 @@
-# RepoBlackbox
+# RepoBlackbox by Catalayer
 
-**Stop AI coding agents from breaking your repo.**
+**AI coding agents move fast. Your repo needs a blackbox.**
 
 [![CI](https://github.com/stephenywilson/RepoBlackbox/actions/workflows/ci.yml/badge.svg)](https://github.com/stephenywilson/RepoBlackbox/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](package.json)
 
-RepoBlackbox is a lightweight CLI **safety, evaluation, and workflow layer** for Claude Code, Codex, Cursor, Copilot, and other AI coding agents. It wraps each AI coding session with scope definition, a repo snapshot, a post-run audit, and a Markdown report — so you always know exactly what the agent changed and whether it stayed within bounds.
+RepoBlackbox is a lightweight **safety, evaluation, and workflow layer** for Claude Code, Codex,
+Cursor, Copilot, and other AI coding agents.
 
-v0.2 adds **Agent Task Bench**: local benchmark tasks for evaluating whether an AI coding agent can complete realistic repo-maintenance tasks safely. No API keys required.
+It wraps each AI coding session with scope definition, a repo snapshot, a post-run audit, and a
+review report — so you always know exactly what the agent changed and whether it stayed within
+bounds.
 
-v0.3 adds **Agent Skill Packs**: structured, copy-paste-ready workflow prompts for Claude Code, Codex, Cursor, Copilot, and other AI coding agents. No API keys required.
+v0.2 adds **Agent Task Bench**: local benchmark tasks for testing whether AI coding agents can
+complete realistic repo-maintenance tasks without touching forbidden files.
 
-It does not replace Git. It adds an AI-agent-specific workflow on top of Git so you catch scope violations and risky edits before you commit.
+v0.3 adds **Agent Skill Packs**: structured, copy-paste-ready workflow prompts for Claude Code,
+Codex, Cursor, Copilot, and other AI coding agents.
 
 *By [Catalayer](https://catalayer.com)*
 
@@ -33,183 +38,9 @@ It does not replace Git. It adds an AI-agent-specific workflow on top of Git so 
 
 ---
 
-## Quick demo
-
-```bash
-# 1. Define scope — what the agent may and may not touch
-repoblackbox scope \
-  --task "Refactor homepage hero" \
-  --allow "src/components/home/**,src/styles/tokens.css" \
-  --forbid ".env,package.json,src/lib/auth/**"
-
-# 2. Snapshot before the agent starts
-repoblackbox snapshot "before claude task"
-
-# 3. Run Claude Code / Codex / Cursor — then audit
-repoblackbox audit    # flags scope violations and risk level
-repoblackbox report   # saves .repoblackbox/reports/latest-report.md
-```
-
----
-
-## Agent Task Bench
-
-RepoBlackbox v0.2 includes local benchmark tasks for evaluating whether AI coding agents can complete realistic repo-maintenance tasks safely.
-
-```bash
-repoblackbox bench list                       # list built-in tasks
-repoblackbox bench prepare readme-url-fix     # copy fixture into a fresh workspace
-# Run your AI coding agent inside the prepared workspace
-repoblackbox bench score readme-url-fix       # deterministic local scoring
-repoblackbox bench report readme-url-fix      # Markdown report
-repoblackbox bench demo                       # self-contained demo (no AI required)
-```
-
-Built-in tasks (v0.2):
-
-| Task | Tests whether the agent can |
-|---|---|
-| `readme-url-fix` | Fix a wrong clone URL without touching `package.json` or `src` |
-| `package-version-sync` | Sync CLI `--version` output to match `package.json` |
-| `docs-toc-update` | Add a missing entry to a README Table of Contents |
-| `security-cleanup` | Remove an obviously-mock placeholder key and a personal local path from docs |
-| `forbidden-file-guard` | Make a one-line docs change without touching `package.json`, `src`, or `.env` |
-
-Key properties:
-
-- **RepoBlackbox does not run AI agents automatically.** It prepares and scores local tasks; you point your agent at the prepared workspace.
-- **No API keys required.** Scoring is deterministic and runs entirely on the local filesystem.
-- Useful for testing Claude Code, Codex, Cursor, Copilot, and other AI coding agents.
-
-See [docs/agent-task-bench.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-task-bench.md) for the full reference.
-
----
-
-## Agent Skill Packs
-
-RepoBlackbox v0.3 includes structured workflow skills — copy-paste-ready task prompts for AI coding agents, with variable substitution.
-
-```bash
-repoblackbox skill list                                   # list built-in skills
-repoblackbox skill show readme-audit                      # show metadata and preview
-repoblackbox skill use github-release-polish \
-  --var project_path=/path/to/repo \
-  --var repo_url=https://github.com/user/repo \
-  --var version=0.3.0                                     # render to stdout
-repoblackbox skill use readme-audit \
-  --var project_path=/path/to/repo \
-  --var repo_url=https://github.com/user/repo \
-  --output .repoblackbox/skills/readme-audit.md           # render to file
-```
-
-Built-in skills (v0.3):
-
-| Skill | Purpose |
-|---|---|
-| `github-release-polish` | Prepare an open-source repo for a GitHub release |
-| `readme-audit` | Audit a README for install accuracy and copy-paste correctness |
-| `repo-url-fix` | Fix wrong repo URLs after a rename or ownership change |
-| `security-privacy-scan` | Scan for private paths, API keys, and internal project references |
-| `npm-package-release-check` | Prepare a Node/TS CLI for npm publishing (no publish) |
-| `python-package-release-check` | Prepare a Python CLI for PyPI release (no publish) |
-| `cli-smoke-test` | Add or improve a CLI smoke test |
-| `changelog-update` | Update CHANGELOG for a new version |
-| `ui-screenshot-audit` | Generate targeted polish instructions from UI screenshots |
-| `agent-safe-refactor` | Guide a constrained refactor with explicit allowed/forbidden files |
-
-Key properties:
-
-- **RepoBlackbox does not run AI agents automatically.** `skill use` only renders prompt text.
-- **No API keys required.** Skills are local Markdown files with variable substitution.
-- **No model providers are called.** Paste the output into Claude Code / Codex / Cursor yourself.
-- Useful for Claude Code, Codex, Cursor, Copilot, and other AI coding agents.
-
-See [docs/agent-skill-packs.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-skill-packs.md) for the full reference.
-
----
-
-## What is RepoBlackbox?
-
-RepoBlackbox is a CLI developer tool that wraps your AI coding workflow with a structured safety protocol:
-
-1. **Scope** — define what the agent is allowed to touch before it starts
-2. **Snapshot** — capture the exact state of your repo before any changes
-3. **Audit** — compare after the agent finishes, flag risky edits and scope violations
-4. **Report** — generate a clean Markdown review you can share, file, or commit
-
-It does not interfere with your AI agent's capabilities. It adds the discipline that production development requires.
-
----
-
-## Why I Built This
-
-I built RepoBlackbox after using Claude Code, Codex, Cursor, and other AI coding agents heavily across multiple real projects — including [Catalayer](https://catalayer.com), Chrome extensions, API services, and internal AI tools.
-
-AI agents are powerful. They can write, refactor, and debug faster than any developer working alone. But working at production scale, I kept hitting the same problems:
-
-**AI coding agents often:**
-
-- Edit files outside the requested scope
-- Rewrite unrelated modules while "fixing" something small
-- Touch `package.json`, lock files, or config files without asking
-- Modify `.env` or deployment files accidentally
-- Delete existing functionality while solving a narrow task
-- Break the existing design system or component structure
-- Make it hard to understand what changed after multiple rounds of iteration
-
-At Catalayer, we needed a simple rule:
-
-> Before an AI agent changes the codebase, it should know the boundaries.  
-> After it changes the codebase, we should know exactly what happened.
-
-RepoBlackbox is the workflow built around that idea.
-
----
-
-## The Problem with AI Coding Agents
-
-AI coding agents do not understand "production anxiety." They do not instinctively know that your `.env` file should never be touched, that your billing library has zero tolerance for accidental edits, or that the design system took months to stabilize.
-
-Without boundaries, even a well-intentioned agent can cause cascading damage. Not because it is bad — but because no one told it what was off-limits.
-
-**RepoBlackbox enforces that conversation before the work begins.**
-
----
-
-## How It Works
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  Developer defines task scope                           │
-│  repoblackbox scope --task "Refactor hero section"      │
-└────────────────────────────┬────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────┐
-│  Snapshot captured before AI edits                      │
-│  repoblackbox snapshot "before hero refactor"           │
-└────────────────────────────┬────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────┐
-│  AI agent edits code                                    │
-│  (Claude Code / Codex / Cursor / Copilot)               │
-└────────────────────────────┬────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────┐
-│  Audit: compare current state vs snapshot               │
-│  repoblackbox audit                                     │
-└────────────────────────────┬────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────┐
-│  Report: generate human-readable Markdown review        │
-│  repoblackbox report                                    │
-└─────────────────────────────────────────────────────────┘
-```
-
----
-
 ## Quick Start
 
-### Install
+RepoBlackbox is not yet published on npm. Install from source:
 
 ```bash
 git clone https://github.com/stephenywilson/RepoBlackbox
@@ -222,201 +53,156 @@ repoblackbox --help
 
 > npm installation will be available after the first npm release.
 
-### Use in your project
+---
+
+## Core workflow
 
 ```bash
-cd /path/to/your/project
-
+# 1. Initialize once per project
 repoblackbox init
 
+# 2. Before each AI session — define scope
 repoblackbox scope \
   --task "Refactor homepage hero" \
   --allow "src/components/home/**,src/styles/tokens.css" \
-  --forbid ".env,package.json,src/lib/auth/**"
+  --forbid ".env,package.json,src/lib/auth/**" \
+  --success "Hero renders correctly, build passes"
 
+# 3. Snapshot before the agent starts
 repoblackbox snapshot "before claude task"
 
-# Run Claude Code / Codex / Cursor
+# 4. Run Claude Code / Codex / Cursor
 
+# 5. Audit what changed
 repoblackbox audit
+
+# 6. Generate a review report
 repoblackbox report
 ```
+
+---
+
+## Agent Task Bench
+
+RepoBlackbox v0.2 added local benchmark tasks for evaluating whether AI coding agents can complete
+realistic repo-maintenance tasks safely — without touching forbidden files.
+
+```bash
+repoblackbox bench list
+repoblackbox bench prepare readme-url-fix
+# run your AI coding agent inside the prepared workspace
+repoblackbox bench score readme-url-fix
+repoblackbox bench report readme-url-fix
+repoblackbox bench demo    # self-contained demo, no AI required
+```
+
+Built-in tasks:
+
+| Task | What it tests |
+|---|---|
+| `readme-url-fix` | Fix a wrong clone URL without touching `package.json` or `src` |
+| `package-version-sync` | Sync CLI `--version` output to match `package.json` |
+| `docs-toc-update` | Add a missing entry to a README Table of Contents |
+| `security-cleanup` | Remove a mock placeholder key and a personal path from docs |
+| `forbidden-file-guard` | Make a one-line docs change without touching `package.json`, `src`, or `.env` |
+
+Key properties:
+
+- RepoBlackbox does not run AI agents automatically.
+- Scoring is deterministic and runs on the local filesystem — no API keys.
+- `bench demo` is fully self-contained and requires no AI agent.
+
+See [docs/agent-task-bench.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-task-bench.md)
+for the full reference.
+
+---
+
+## Agent Skill Packs
+
+RepoBlackbox v0.3 added structured, reusable, copy-paste-ready workflow prompts for Claude Code,
+Codex, Cursor, Copilot, and other AI coding agents.
+
+```bash
+repoblackbox skill list
+repoblackbox skill show readme-audit
+repoblackbox skill use github-release-polish \
+  --var project_path=/path/to/repo \
+  --var repo_url=https://github.com/user/repo \
+  --var version=0.3.0
+repoblackbox skill use readme-audit \
+  --var project_path=/path/to/repo \
+  --var repo_url=https://github.com/user/repo \
+  --output .repoblackbox/skills/readme-audit.md
+```
+
+Built-in skills:
+
+| Skill | Purpose |
+|---|---|
+| `github-release-polish` | Prepare an open-source repo for a GitHub release |
+| `readme-audit` | Audit a README for install accuracy and copy-paste correctness |
+| `repo-url-fix` | Fix wrong repo URLs after a rename or ownership change |
+| `security-privacy-scan` | Scan for private paths, API keys, and internal references |
+| `npm-package-release-check` | Prepare a Node/TS CLI for npm publishing (no publish) |
+| `python-package-release-check` | Prepare a Python CLI for PyPI release (no publish) |
+| `cli-smoke-test` | Add or improve a CLI smoke test |
+| `changelog-update` | Update CHANGELOG for a new version |
+| `ui-screenshot-audit` | Generate targeted polish from UI screenshots |
+| `agent-safe-refactor` | Guide a constrained refactor with explicit allowed/forbidden files |
+
+Key properties:
+
+- `skill use` renders a prompt and prints or writes it — it does not execute it.
+- No API keys required. No model providers are called.
+- Skills are local Markdown templates with variable substitution.
+- Paste the rendered output into Claude Code / Codex / Cursor yourself.
+
+See [docs/agent-skill-packs.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-skill-packs.md)
+for the full reference.
 
 ---
 
 ## Commands
 
-### `repoblackbox init`
-
-Creates the RepoBlackbox config and safety documents in your project.
-
-```bash
-repoblackbox init
-repoblackbox init --force   # overwrite existing files
-```
-
-Creates:
-```
-.repoblackbox/
-  config.json
-  protected-files.json
-  snapshots/
-  reports/
-  runs/
-
-AGENT_RULES.md        ← paste into your AI agent
-PROJECT_CONTEXT.md    ← describe your project
-PROTECTED_FILES.md    ← files the agent must not touch
-TASK_SCOPE.md         ← define each task before starting
-```
-
----
-
-### `repoblackbox scope`
-
-Defines task boundaries before each AI coding session.
-
-```bash
-# Interactive mode
-repoblackbox scope
-
-# Flag mode
-repoblackbox scope \
-  --task "Refactor homepage hero" \
-  --allow "src/pages/index.tsx,src/components/home/**" \
-  --forbid ".env,package.json,src/lib/billing/**" \
-  --success "Hero improved, navigation unchanged, build passes"
-```
-
-Writes `TASK_SCOPE.md` — paste this into Claude Code / Codex / Cursor before starting.
-
----
-
-### `repoblackbox snapshot "label"`
-
-Captures the exact state of your repo before an AI agent starts working.
-
-```bash
-repoblackbox snapshot "before hero refactor"
-repoblackbox snapshot "before auth refactor"
-```
-
-Records file hashes for all non-sensitive files. For `.env` and similar files, records only existence, size, and modification time — never reads content.
-
-Saves to `.repoblackbox/snapshots/`.
-
----
-
-### `repoblackbox audit`
-
-Compares the current repo state against the latest snapshot.
-
-```bash
-repoblackbox audit
-```
-
-Detects:
-- Added files
-- Modified files
-- Deleted files
-- Sensitive files touched (`.env`, `.env.*`)
-- Scope violations — files matching `--forbid` patterns
-- Out-of-scope changes — files outside `--allow` patterns
-- Built-in protection for auth, billing, API, deployment files
-- Large change warnings
-
-Assigns a risk level: `LOW`, `MEDIUM`, or `HIGH`.
-
-Saves audit report to `.repoblackbox/reports/`.
-
----
-
-### `repoblackbox report`
-
-Generates a full human-readable AI coding run report in Markdown.
-
-```bash
-repoblackbox report
-```
-
-Report includes:
-- Summary table
-- Task scope
-- Changed files
-- Risk flags
-- Review checklist
-- Suggested next steps based on risk level
-
-Saves to `.repoblackbox/reports/latest-report.md`.
-
----
-
-## Concrete Example: Homepage Hero Refactor
-
-```bash
-# Step 1 — Define scope before opening the AI agent
-repoblackbox scope \
-  --task "Refactor homepage hero section to use new design tokens" \
-  --allow "src/components/home/**,src/styles/tokens.css" \
-  --forbid ".env,package.json,src/lib/billing/**,src/lib/auth/**" \
-  --success "Hero renders correctly, navigation unchanged, build passes"
-
-# Step 2 — Snapshot the repo before any changes
-repoblackbox snapshot "before claude homepage task"
-
-# Step 3 — Open Claude Code / Codex / Cursor
-# Paste TASK_SCOPE.md into the conversation, then give your instruction.
-# The agent now knows what it is and is not allowed to touch.
-
-# Step 4 — After the agent finishes, audit what changed
-repoblackbox audit
-# Output example:
-#   Added    (1): src/components/home/Hero.v2.tsx
-#   Modified (2): src/components/home/Hero.tsx, src/styles/tokens.css
-#   Modified (1): package.json  ← ⚠ Scope violation: matches forbidden pattern
-#   Risk Level: HIGH
-
-# Step 5 — Generate the full review report
-repoblackbox report
-# → .repoblackbox/reports/latest-report.md
-# → Includes: summary, task scope, changed files, scope violations, review checklist
-```
-
-**What the audit catches automatically:**
-
-| Change | Detection |
+| Command | What it does |
 |---|---|
-| File matches `--forbid` pattern | Scope violation → **HIGH** |
-| File outside `--allow` patterns | Out-of-scope warning → **MEDIUM** |
-| `package.json` / lock files changed | Dependency flag → **MEDIUM** |
-| `.env` modified | Sensitive file flag → **HIGH** |
-| Auth / billing / API files changed | Built-in HIGH risk |
-| More than 10 files deleted | Bulk deletion warning |
-
-**Paste into Claude Code before starting:**
-
-```
-Read AGENT_RULES.md and TASK_SCOPE.md before editing any code.
-Only touch files listed in the "Allowed Files" section.
-Do not touch any file in the "Forbidden" section.
-After finishing, list every file you changed and why.
-```
+| `repoblackbox init` | Create `.repoblackbox/` config and four agent safety documents |
+| `repoblackbox scope` | Define task boundaries with `--allow` / `--forbid`; saves JSON for audit |
+| `repoblackbox snapshot <label>` | SHA-256 hash every non-sensitive file; record `.env` metadata without reading content |
+| `repoblackbox audit` | Diff current state vs snapshot; detect scope violations and out-of-scope changes |
+| `repoblackbox report` | Write Markdown review report with scope violations, checklist, and next steps |
+| `repoblackbox bench list` | List built-in Agent Task Bench tasks |
+| `repoblackbox bench prepare <task>` | Copy a benchmark fixture into a fresh workspace |
+| `repoblackbox bench score <task>` | Run deterministic checks against the workspace |
+| `repoblackbox bench report <task>` | Generate a Markdown bench report |
+| `repoblackbox bench demo` | Self-contained demonstration, no AI required |
+| `repoblackbox skill list` | List built-in Agent Skill Packs |
+| `repoblackbox skill show <skill>` | Show skill metadata and prompt preview |
+| `repoblackbox skill use <skill>` | Render a skill prompt with `--var` substitutions |
 
 ---
 
 ## Important Clarifications
 
-**RepoBlackbox does not perform rollback yet.**  
-Safe rollback is planned for a future release. Automated rollback done poorly can cause data loss, so current versions focus on scope, snapshot, audit, report, bench, and skill workflows. Use `git checkout <file>` or `git reset` manually after reviewing the audit.
+**RepoBlackbox does not run AI agents automatically.**
+It prepares workspaces, renders prompts, audits diffs, and generates reports.
+You run the AI agent yourself.
 
-**RepoBlackbox does not read `.env` file content.**  
-For sensitive files like `.env` and `.env.*`, RepoBlackbox records only: whether the file exists, its size, and its modification time. It never reads or hashes the content. This is by design.
+**RepoBlackbox does not call external model providers.**
+No API keys are required anywhere.
 
-**RepoBlackbox is not a security scanner.**  
-It does not scan for secrets, vulnerabilities, or malicious code. It is a workflow safety layer: it tells you what changed, what was forbidden, and what needs human review.
+**RepoBlackbox does not read `.env` file contents.**
+For `.env` and `.env.*` files, RepoBlackbox records only: whether the file exists, its size, and
+its modification time. It never reads or hashes the file content. This is by design.
 
-**RepoBlackbox does not slow down your AI coding.**  
-The entire workflow — scope, snapshot, audit, report — takes under 10 seconds for most projects. The cost of skipping it is measured in debugging time and broken builds.
+**RepoBlackbox is not a security scanner.**
+It does not scan for secrets, vulnerabilities, or malicious code. It tells you what the agent
+changed, what was forbidden, and what needs human review.
+
+**RepoBlackbox does not perform rollback yet.**
+Safe rollback is planned for a future release. Automated rollback done poorly can cause data loss,
+so current versions focus on scope, snapshot, audit, report, bench, and skill workflows.
+Use `git checkout -- path/to/file` or `git reset` manually after reviewing the audit.
 
 ---
 
@@ -445,72 +231,34 @@ You can customize the protected list in `.repoblackbox/protected-files.json`.
 | Level | Meaning |
 |---|---|
 | `LOW` | Only allowed, normal files changed |
-| `MEDIUM` | Dependency, package, or config files changed |
-| `HIGH` | Env, auth, billing, API, deployment, or database files touched — or many files deleted — or any file matches a `--forbid` pattern |
+| `MEDIUM` | Dependency, package, or config files changed; or files changed outside `--allow` |
+| `HIGH` | Env, auth, billing, API, deployment, or database files touched; many files deleted; or a file matches a `--forbid` pattern |
 
 ---
 
-## What RepoBlackbox does
+## RepoBlackbox Version Line
 
-| Command | What it does |
+| Version | What was added |
 |---|---|
-| `repoblackbox init` | Create `.repoblackbox/` config and four agent safety documents |
-| `repoblackbox scope` | Define task boundaries (interactive or `--allow`/`--forbid` flags); saves JSON for audit |
-| `repoblackbox snapshot` | SHA-256 hash every non-sensitive file; record `.env` metadata without reading content |
-| `repoblackbox audit` | Diff current state vs snapshot; detect scope violations, out-of-scope changes, risk level |
-| `repoblackbox report` | Write Markdown review report with scope violations, checklist, and suggested next steps |
-| `repoblackbox bench list` | List built-in Agent Task Bench tasks (v0.2) |
-| `repoblackbox bench prepare <task>` | Copy a benchmark fixture into a fresh workspace (v0.2) |
-| `repoblackbox bench score <task>` | Run deterministic checks against the workspace (v0.2) |
-| `repoblackbox bench report <task>` | Generate a Markdown bench report (v0.2) |
-| `repoblackbox bench demo` | Self-contained demonstration, no AI required (v0.2) |
-| `repoblackbox skill list` | List built-in Agent Skill Packs (v0.3) |
-| `repoblackbox skill show <skill>` | Show skill metadata and prompt preview (v0.3) |
-| `repoblackbox skill use <skill>` | Render a skill prompt with `--var` substitutions (v0.3) |
+| **v0.1** | Safety workflow: `scope`, `snapshot`, `audit`, `report` |
+| **v0.2** | Agent Task Bench: local benchmark tasks |
+| **v0.3** | Agent Skill Packs: copy-paste workflow prompts |
 
-**RepoBlackbox does not do:**
-
-| Feature | Status |
-|---|---|
-| Run AI agents automatically | Out of scope — by design |
-| Read `.env` content | Never — by design |
-| Rollback | Planned (safe rollback is non-trivial) |
-| GitHub PR comments | Planned |
-| CI exit-code gate | Planned |
+**Current version: v0.3.0**
 
 ---
 
 ## Roadmap
 
-### v0.3.0 (current)
-- Everything in v0.1.x and v0.2.x
-- **Agent Skill Packs**: `skill list / show / use`
-- 10 built-in workflow skills (`github-release-polish`, `readme-audit`, `repo-url-fix`, `security-privacy-scan`, `npm-package-release-check`, `python-package-release-check`, `cli-smoke-test`, `changelog-update`, `ui-screenshot-audit`, `agent-safe-refactor`)
-- Variable substitution via `--var key=value`
-- `--output <file>` support for writing rendered prompts
+Planned for future releases:
 
-### Future
-- Safer rollback workflow
+- Safe rollback workflow
 - GitHub PR comment support
-- CI mode (exit code based on risk level)
-- Custom skill directory support
-- More built-in benchmark tasks and skills
-- Project presets (Next.js, Remix, SvelteKit, etc.)
-- HTML report output
-
----
-
-## Philosophy
-
-AI coding should be fast. But production code needs boundaries.
-
-Most developers using AI agents do not have a systematic way to answer: *"what exactly did the agent change, and was it safe?"*
-
-RepoBlackbox is not about slowing down AI coding. It is about making sure you know what happened — before you push.
-
-The snapshot is your pre-flight check.  
-The audit is your landing check.  
-The report is your flight log.
+- CI gate mode (non-zero exit on HIGH risk)
+- Custom user skill directories
+- Team policy files
+- Optional HTML reports
+- MCP integration exploration
 
 ---
 
@@ -518,12 +266,11 @@ The report is your flight log.
 
 | Doc | Description |
 |---|---|
-| [docs/example-workflow.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/example-workflow.md) | Full step-by-step workflow with real command output |
-| [docs/agent-task-bench.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-task-bench.md) | Agent Task Bench — task format, check types, scoring, custom tasks |
-| [docs/agent-skill-packs.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-skill-packs.md) | Agent Skill Packs — skill format, variables, built-in skills, custom skills |
-| [docs/risk-model.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/risk-model.md) | How LOW / MEDIUM / HIGH are determined, scope violations, out-of-scope |
-| [docs/ai-agent-rules.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/ai-agent-rules.md) | How the four safety documents work, Claude Code / Cursor / Codex integration |
-| [examples/unsafe-agent-run/](examples/unsafe-agent-run/README.md) | End-to-end example: agent touches forbidden file, audit flags HIGH |
+| [docs/example-workflow.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/example-workflow.md) | Full step-by-step workflow |
+| [docs/risk-model.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/risk-model.md) | How LOW / MEDIUM / HIGH are determined |
+| [docs/ai-agent-rules.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/ai-agent-rules.md) | How the four safety documents work |
+| [docs/agent-task-bench.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-task-bench.md) | Agent Task Bench — task format, check types, scoring |
+| [docs/agent-skill-packs.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/agent-skill-packs.md) | Agent Skill Packs — skill format, variables, built-in skills |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, build, smoke test, contribution guidelines |
 | [SECURITY.md](SECURITY.md) | What RepoBlackbox does and does not do with your files |
@@ -538,5 +285,5 @@ Apache 2.0 — free to use, modify, and build upon.
 
 ---
 
-*RepoBlackbox was built from real AI coding experience at Catalayer.*  
+*RepoBlackbox was built from real AI coding experience at Catalayer.*
 *It is not just a template — it is a workflow.*
