@@ -7,6 +7,38 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [0.2.0] — 2026-05-04
+
+### Added
+- **Agent Task Bench** — local benchmark tasks for evaluating AI coding agents
+- New command group: `repoblackbox bench list / prepare / score / report / demo`
+- 5 built-in benchmark tasks:
+  - `readme-url-fix` — fix a wrong clone URL without touching forbidden files
+  - `package-version-sync` — sync CLI `--version` output with `package.json`
+  - `docs-toc-update` — add a missing entry to a README Table of Contents
+  - `security-cleanup` — remove a personal local path and a mock placeholder key
+  - `forbidden-file-guard` — make a one-line docs change without touching forbidden files
+- 8 deterministic check types: `file_contains`, `file_not_contains`, `file_exists`, `file_unchanged`, `file_changed`, `pattern_absent`, `forbidden_untouched`, `max_changed_files`
+- Hash-based baseline diffing for changed/added/deleted file detection
+- Markdown and JSON bench reports under `.repoblackbox/bench/reports/`
+- `bench demo` runs a fully self-contained demonstration with no AI required
+- `docs/agent-task-bench.md` — full reference for task format, check types, and custom tasks
+- `benchmark/` directory shipped with the npm package
+
+### Changed
+- Project positioning extended from "safety layer" to **"safety and evaluation layer"** for AI coding agents
+- `package.json` description, keywords, and CLI `--description` updated accordingly
+- README rewritten in places to mention Agent Task Bench while preserving v0.1.x positioning
+- `package.json` version bumped to 0.2.0
+- `package.json` files field includes `benchmark/`
+
+### Notes
+- All v0.1.x behavior preserved — `init`, `scope`, `snapshot`, `audit`, `report` unchanged
+- No AI model calls, no external APIs, no telemetry
+- RepoBlackbox **never** runs AI agents automatically — Agent Task Bench prepares and scores; you bring the agent
+
+---
+
 ## [0.1.3] — 2026-05-04
 
 ### Fixed

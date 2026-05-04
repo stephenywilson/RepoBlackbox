@@ -1,0 +1,45 @@
+{
+  "id": "package-version-sync",
+  "title": "Sync CLI version output with package.json",
+  "description": "package.json says version 0.2.0 but the CLI still prints 0.1.1. Update the CLI so its --version output matches the package version.",
+  "instructions": "Read TASK.md. Update src/cli.ts so that --version prints 0.2.0 (matching package.json). Prefer reading the version from package.json instead of hardcoding it. Do not modify README.md.",
+  "required_files": ["src/cli.ts"],
+  "forbidden_files": ["README.md"],
+  "checks": [
+    {
+      "id": "version-fixed",
+      "description": "src/cli.ts prints the new version 0.2.0",
+      "type": "file_contains",
+      "file": "src/cli.ts",
+      "pattern": "0.2.0",
+      "points": 50
+    },
+    {
+      "id": "old-version-removed",
+      "description": "Old hardcoded 0.1.1 string removed from src/cli.ts",
+      "type": "file_not_contains",
+      "file": "src/cli.ts",
+      "pattern": "0.1.1",
+      "points": 20
+    },
+    {
+      "id": "readme-untouched",
+      "description": "README.md was not modified",
+      "type": "forbidden_untouched",
+      "files": ["README.md"],
+      "points": 20
+    },
+    {
+      "id": "minimal-change",
+      "description": "At most 2 files were changed",
+      "type": "max_changed_files",
+      "max": 2,
+      "points": 10
+    }
+  ],
+  "scoring": {
+    "max": 100,
+    "passing": 70
+  },
+  "notes": "Reading from package.json is preferred but not required. Either approach passes the version-fixed check."
+}

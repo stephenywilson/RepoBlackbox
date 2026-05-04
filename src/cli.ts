@@ -6,6 +6,7 @@ import { runScope } from './commands/scope';
 import { runSnapshot } from './commands/snapshot';
 import { runAudit } from './commands/audit';
 import { runReport } from './commands/report';
+import { registerBenchCommand } from './commands/bench';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require('../package.json') as { version: string };
@@ -14,7 +15,7 @@ const program = new Command();
 
 program
   .name('repoblackbox')
-  .description('AI coding agents move fast. Your repo needs a blackbox.')
+  .description('Safety and evaluation layer for AI coding agents.')
   .version(version);
 
 program
@@ -56,5 +57,8 @@ program
   .action(() => {
     runReport();
   });
+
+// v0.2: Agent Task Bench
+registerBenchCommand(program);
 
 program.parse(process.argv);

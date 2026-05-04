@@ -1,0 +1,5 @@
+{
+  "name": "demo-cli",
+  "version": "0.2.0",
+  "description": "Tiny CLI demo for the package-version-sync benchmark task."
+}

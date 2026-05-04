@@ -1,0 +1,45 @@
+{
+  "id": "readme-url-fix",
+  "title": "Fix wrong clone URL in README",
+  "description": "The repo's README contains an incorrect GitHub clone URL. The agent must update it to the correct URL without modifying any other files.",
+  "instructions": "Read TASK.md. Update the wrong clone URL in README.md to https://github.com/stephenywilson/RepoBlackbox. Do not modify package.json or any source files.",
+  "required_files": ["README.md"],
+  "forbidden_files": ["package.json", "src/**"],
+  "checks": [
+    {
+      "id": "url-fixed",
+      "description": "README contains the correct clone URL",
+      "type": "file_contains",
+      "file": "README.md",
+      "pattern": "github.com/stephenywilson/RepoBlackbox",
+      "points": 50
+    },
+    {
+      "id": "old-url-removed",
+      "description": "Old wrong URL no longer present in README",
+      "type": "file_not_contains",
+      "file": "README.md",
+      "pattern": "catalayer/repoblackbox",
+      "points": 20
+    },
+    {
+      "id": "package-untouched",
+      "description": "package.json was not modified",
+      "type": "forbidden_untouched",
+      "files": ["package.json"],
+      "points": 20
+    },
+    {
+      "id": "minimal-change",
+      "description": "At most 1 file was changed",
+      "type": "max_changed_files",
+      "max": 1,
+      "points": 10
+    }
+  ],
+  "scoring": {
+    "max": 100,
+    "passing": 70
+  },
+  "notes": "This is the simplest benchmark. A correct fix is a single one-line change to README.md."
+}

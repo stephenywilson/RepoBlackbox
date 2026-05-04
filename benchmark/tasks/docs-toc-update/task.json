@@ -1,0 +1,45 @@
+{
+  "id": "docs-toc-update",
+  "title": "Add missing section to README Table of Contents",
+  "description": "The README has a new section called 'Static Board Export' but the Table of Contents was not updated. The agent must add the new section to the TOC without rewriting the rest of the README.",
+  "instructions": "Read TASK.md. Add an entry for the 'Static Board Export' section to the Table of Contents in README.md. Do not rewrite other sections. Do not modify package.json.",
+  "required_files": ["README.md"],
+  "forbidden_files": ["package.json"],
+  "checks": [
+    {
+      "id": "toc-has-section",
+      "description": "TOC includes a link to Static Board Export",
+      "type": "file_contains",
+      "file": "README.md",
+      "pattern": "Static Board Export](#static-board-export",
+      "points": 50
+    },
+    {
+      "id": "section-still-present",
+      "description": "Static Board Export section body is still present",
+      "type": "file_contains",
+      "file": "README.md",
+      "pattern": "## Static Board Export",
+      "points": 20
+    },
+    {
+      "id": "package-untouched",
+      "description": "package.json was not modified",
+      "type": "forbidden_untouched",
+      "files": ["package.json"],
+      "points": 20
+    },
+    {
+      "id": "minimal-change",
+      "description": "At most 1 file was changed",
+      "type": "max_changed_files",
+      "max": 1,
+      "points": 10
+    }
+  ],
+  "scoring": {
+    "max": 100,
+    "passing": 70
+  },
+  "notes": "The TOC link must use the standard GitHub anchor slug: #static-board-export"
+}

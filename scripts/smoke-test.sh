@@ -16,7 +16,7 @@ trap cleanup EXIT
 
 echo ""
 echo "══════════════════════════════════════════════"
-echo "  RepoBlackbox Smoke Test  (v0.1.2)"
+echo "  RepoBlackbox Smoke Test  (v0.2.0)"
 echo "══════════════════════════════════════════════"
 
 # ── 1. Setup ──────────────────────────────────────
@@ -138,6 +138,75 @@ section "9. init --force is idempotent"
 $RBB init --force > /dev/null
 [ -f "AGENT_RULES.md" ] || fail "AGENT_RULES.md missing after --force"
 pass "init --force: idempotent"
+
+# ── 10. CLI version ───────────────────────────────
+section "10. CLI version reports 0.2.0"
+VERSION_OUT="$($RBB --version)"
+[ "$VERSION_OUT" = "0.2.0" ] || fail "version is '$VERSION_OUT', expected '0.2.0'"
+pass "version: 0.2.0"
+
+# ── 11. bench list ─────────────────────────────────
+section "11. bench list shows all 5 tasks"
+LIST_OUT="$($RBB bench list 2>&1)"
+for task in readme-url-fix package-version-sync docs-toc-update security-cleanup forbidden-file-guard; do
+  echo "$LIST_OUT" | grep -q "$task" || fail "bench list missing task: $task"
+done
+pass "bench list: all 5 tasks present"
+
+# ── 12. bench prepare in temp project ─────────────
+section "12. bench prepare readme-url-fix --force"
+$RBB bench prepare readme-url-fix --force > /dev/null
+[ -d ".repoblackbox/bench/workspaces/readme-url-fix/repo" ] \
+  || fail "bench workspace repo/ not created"
+[ -f ".repoblackbox/bench/workspaces/readme-url-fix/baseline.json" ] \
+  || fail "baseline.json not created"
+[ -f ".repoblackbox/bench/workspaces/readme-url-fix/TASK.md" ] \
+  || fail "TASK.md not copied"
+pass "bench prepare: workspace + baseline + TASK.md created"
+
+# ── 13. apply deterministic fix to workspace README ─
+section "13. apply deterministic README fix (no AI)"
+sed -i.bak 's|catalayer/repoblackbox|stephenywilson/RepoBlackbox|g' \
+  .repoblackbox/bench/workspaces/readme-url-fix/repo/README.md
+rm -f .repoblackbox/bench/workspaces/readme-url-fix/repo/README.md.bak
+grep -q "stephenywilson/RepoBlackbox" \
+  .repoblackbox/bench/workspaces/readme-url-fix/repo/README.md \
+  || fail "deterministic fix did not apply"
+pass "fix applied to workspace README"
+
+# ── 14. bench score ───────────────────────────────
+section "14. bench score readme-url-fix"
+$RBB bench score readme-url-fix > /dev/null
+[ -f ".repoblackbox/bench/reports/readme-url-fix-score.json" ] \
+  || fail "score JSON not created"
+[ -f ".repoblackbox/bench/reports/latest-score.json" ] \
+  || fail "latest-score.json not created"
+SCORE_STATUS="$(node -e "console.log(require('./.repoblackbox/bench/reports/latest-score.json').status)")"
+[ "$SCORE_STATUS" = "PASS" ] || fail "score status is '$SCORE_STATUS', expected PASS"
+pass "bench score: PASS, JSON saved"
+
+# ── 15. bench report ──────────────────────────────
+section "15. bench report readme-url-fix"
+$RBB bench report readme-url-fix > /dev/null
+[ -f ".repoblackbox/bench/reports/readme-url-fix-report.md" ] \
+  || fail "bench report not created"
+[ -f ".repoblackbox/bench/reports/latest-report.md" ] \
+  || fail "latest-report.md not created"
+grep -q "Score" .repoblackbox/bench/reports/latest-report.md \
+  || fail "report missing Score section"
+pass "bench report: Markdown saved"
+
+# ── 16. bench demo (separate temp dir) ─────────────
+section "16. bench demo runs end-to-end"
+DEMO_DIR="/tmp/rbb-bench-demo-$$"
+mkdir -p "$DEMO_DIR"
+( cd "$DEMO_DIR" && $RBB bench demo > /tmp/rbb-bench-demo-$$.log 2>&1 )
+grep -q "No API keys" /tmp/rbb-bench-demo-$$.log \
+  || fail "bench demo did not finish cleanly"
+[ -f "$DEMO_DIR/.repoblackbox/bench/reports/latest-report.md" ] \
+  || fail "bench demo did not create a report"
+rm -rf "$DEMO_DIR" /tmp/rbb-bench-demo-$$.log
+pass "bench demo: completed without API keys"
 
 echo ""
 echo "══════════════════════════════════════════════"

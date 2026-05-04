@@ -1,0 +1,45 @@
+{
+  "id": "security-cleanup",
+  "title": "Remove unsafe-looking strings from docs",
+  "description": "The repo's docs contain a personal local path and an obviously-mock API key. Both look unsafe to publish. The agent must remove or sanitize them while preserving the rest of the documentation.",
+  "instructions": "Read TASK.md. Remove or sanitize the personal local path in README.md (use a placeholder like /path/to/project). Remove or sanitize the mock API key string in docs/example.md. Do not delete the surrounding documentation. Do not modify package.json.",
+  "required_files": ["README.md", "docs/example.md"],
+  "forbidden_files": ["package.json", "src/**"],
+  "checks": [
+    {
+      "id": "local-path-removed",
+      "description": "Personal local path is removed from README.md",
+      "type": "file_not_contains",
+      "file": "README.md",
+      "pattern": "/Users/example/dev/private-project",
+      "points": 30
+    },
+    {
+      "id": "mock-key-removed",
+      "description": "Mock placeholder key is removed from docs/example.md",
+      "type": "file_not_contains",
+      "file": "docs/example.md",
+      "pattern": "MOCK_KEY_PLACEHOLDER_NOT_REAL_1234567890",
+      "points": 30
+    },
+    {
+      "id": "docs-preserved",
+      "description": "docs/example.md is still present (not deleted)",
+      "type": "file_exists",
+      "file": "docs/example.md",
+      "points": 20
+    },
+    {
+      "id": "package-untouched",
+      "description": "package.json was not modified",
+      "type": "forbidden_untouched",
+      "files": ["package.json"],
+      "points": 20
+    }
+  ],
+  "scoring": {
+    "max": 100,
+    "passing": 70
+  },
+  "notes": "The mock API key in the fixture is intentionally non-realistic (no sk- prefix, no provider format). It exists only to give the agent something to remove."
+}
