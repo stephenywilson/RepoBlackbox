@@ -19,6 +19,8 @@ complete realistic repo-maintenance tasks without touching forbidden files.
 v0.3 adds **Agent Skill Packs**: structured, reusable, copy-paste-ready workflow prompts for Claude
 Code, Codex, Cursor, Copilot, and other AI coding agents.
 
+v0.4 adds **Custom User Skill Directories**: project-local skill packs in `.repoblackbox/skills/`.
+
 *By [Catalayer](https://catalayer.com)*
 
 ![RepoBlackbox terminal demo](docs/assets/terminal-demo.svg)
@@ -188,6 +190,41 @@ for the full reference.
 
 ---
 
+## Custom User Skill Directories
+
+RepoBlackbox v0.4 supports local skill packs inside your project.
+
+```bash
+# Create .repoblackbox/skills/ and an example skill
+repoblackbox skill init
+
+# List only local skills
+repoblackbox skill list --local
+
+# Show a local skill
+repoblackbox skill show example-custom-skill --local
+
+# Use a local skill
+repoblackbox skill use example-custom-skill \
+  --var project_path=/path/to/repo \
+  --var task="Refactor homepage hero" \
+  --local
+```
+
+Key properties:
+
+- Built-in skills live in the RepoBlackbox package (global).
+- Local skills live in `.repoblackbox/skills/` (per-project).
+- Local skills use the same Markdown + YAML frontmatter format as built-in skills.
+- Local skills are resolved first — they can override a built-in skill with the same id.
+- Use `--skills-dir <path>` to point to a custom directory instead of `.repoblackbox/skills/`.
+- No API providers are called. RepoBlackbox only renders prompt text.
+
+See [docs/custom-skills.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/custom-skills.md)
+for the full reference.
+
+---
+
 ## Commands
 
 | Command | What it does |
@@ -202,7 +239,11 @@ for the full reference.
 | repoblackbox bench score | Score a completed benchmark task |
 | repoblackbox bench report | Generate a benchmark report |
 | repoblackbox bench demo | Run a self-contained bench demo |
-| repoblackbox skill list | List built-in skill packs |
+| repoblackbox skill init | Create local skill directory and example skill |
+| repoblackbox skill list | List built-in and local skills |
+| repoblackbox skill list --local | List only local skills |
+| repoblackbox skill list --built-in | List only built-in skills |
+| repoblackbox skill list --all | List built-in and local skills explicitly |
 | repoblackbox skill show | Show skill metadata and preview |
 | repoblackbox skill use | Render a skill prompt with variables |
 
@@ -267,8 +308,9 @@ You can customize the protected list in .repoblackbox/protected-files.json.
 - v0.1: Safety workflow with scope, snapshot, audit, and report
 - v0.2: Agent Task Bench
 - v0.3: Agent Skill Packs
+- v0.4: Custom user skill directories
 
-Current version: v0.3.0
+Current version: v0.4.0
 
 ---
 
@@ -279,7 +321,6 @@ Planned for future releases:
 - Safe rollback workflow
 - GitHub PR comment support
 - CI gate mode
-- Custom user skill directories
 - Team policy files
 - Optional HTML reports
 - MCP integration exploration
@@ -295,6 +336,7 @@ Planned for future releases:
 | docs/ai-agent-rules.md | Agent rule files and task scope workflow |
 | docs/agent-task-bench.md | Agent Task Bench task format and scoring |
 | docs/agent-skill-packs.md | Skill Pack format, variables, and built-in skills |
+| docs/custom-skills.md | Custom user skill directories, local override, --skills-dir |
 | CHANGELOG.md | Version history |
 | CONTRIBUTING.md | Setup, build, smoke test, and contribution guidelines |
 | SECURITY.md | What RepoBlackbox does and does not do with files |

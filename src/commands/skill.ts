@@ -1,50 +1,119 @@
 import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
-import { listSkillIds, loadSkill } from '../skills/loader';
+import {
+  listSkillIds,
+  listLocalSkillIds,
+  resolveSkill,
+  getLocalSkillsDir,
+  SkillSource,
+} from '../skills/loader';
 import { parseVarsFromCli, findMissingRequired } from '../skills/variables';
 import { renderSkill } from '../skills/renderer';
 import { ensureDir } from '../utils/fs';
 import { log, printBanner } from '../utils/render';
+import { runSkillInit } from '../skills/init';
 
-function runSkillList(): void {
-  printBanner('skill list — Available skills');
-  const ids = listSkillIds();
-  if (ids.length === 0) {
-    log.warn('No skills found.');
-    return;
+// ── skill list ──────────────────────────────────────────────────────
+
+interface ListOptions {
+  builtIn?: boolean;
+  local?: boolean;
+  all?: boolean;
+  skillsDir?: string;
+}
+
+function runSkillList(options: ListOptions): void {
+  printBanner('skill list — Skills');
+
+  const showBuiltIn = options.builtIn || options.all || (!options.local);
+  const showLocal = options.local || options.all || (!options.builtIn);
+
+  if (showBuiltIn) {
+    const ids = listSkillIds();
+    log.raw(`Built-in skills (${ids.length}):`);
+    if (ids.length === 0) {
+      log.raw('  (none)');
+    } else {
+      for (const id of ids) {
+        try {
+          const r = resolveSkill(id, 'built-in');
+          log.raw(`  - ${id}  —  ${r?.skill.metadata.title ?? '(no title)'}`);
+        } catch {
+          log.raw(`  - ${id}  —  (failed to parse)`);
+        }
+      }
+    }
+    console.log();
   }
-  log.raw('Available skills:');
-  for (const id of ids) {
-    try {
-      const skill = loadSkill(id);
-      log.raw(`  - ${id}  —  ${skill?.metadata.title ?? '(no title)'}`);
-    } catch {
-      log.raw(`  - ${id}  —  (failed to parse)`);
+
+  if (showLocal) {
+    const localDir = getLocalSkillsDir(options.skillsDir);
+    const ids = listLocalSkillIds(options.skillsDir);
+    if (ids.length > 0) {
+      log.raw(`Local skills (${ids.length}):`);
+      for (const id of ids) {
+        try {
+          const r = resolveSkill(id, 'local', options.skillsDir);
+          log.raw(`  - ${id}  —  ${r?.skill.metadata.title ?? '(no title)'}`);
+        } catch {
+          log.raw(`  - ${id}  —  (failed to parse)`);
+        }
+      }
+      console.log();
+    } else if (options.local) {
+      // Only complain if --local was explicitly requested
+      log.warn(`No local skills found in: ${localDir}`);
+      log.info('Run: repoblackbox skill init');
+      console.log();
     }
   }
-  console.log();
+
   log.info('Show details:  repoblackbox skill show <skill>');
   log.info('Render:        repoblackbox skill use <skill> --var key=value');
+  log.info('Init local:    repoblackbox skill init');
   console.log();
 }
 
-function runSkillShow(skillId: string): void {
+// ── skill show ──────────────────────────────────────────────────────
+
+interface ShowOptions {
+  builtIn?: boolean;
+  local?: boolean;
+  skillsDir?: string;
+}
+
+function runSkillShow(skillId: string, options: ShowOptions): void {
   printBanner(`skill show — ${skillId}`);
-  let skill;
+
+  const source: SkillSource = options.builtIn ? 'built-in' : options.local ? 'local' : 'auto';
+  let resolved;
   try {
-    skill = loadSkill(skillId);
+    resolved = resolveSkill(skillId, source, options.skillsDir);
   } catch (e) {
     log.error(`Invalid skill file: ${(e as Error).message}`);
     process.exit(1);
   }
-  if (!skill) {
-    log.error(`Unknown skill: ${skillId}`);
-    log.info(`Available: ${listSkillIds().join(', ') || '(none)'}`);
+
+  if (!resolved) {
+    const searchedIn = options.builtIn
+      ? 'built-in skills'
+      : options.local
+      ? `local skills (${getLocalSkillsDir(options.skillsDir)})`
+      : 'local + built-in skills';
+    log.error(`Skill "${skillId}" not found in ${searchedIn}.`);
+    log.info('List available skills: repoblackbox skill list');
+    if (!options.local) log.info('Create a local skill: repoblackbox skill init');
     process.exit(1);
   }
-  const m = skill.metadata;
+
+  if (resolved.isOverride) {
+    log.info(`Using local skill override: ${skillId}`);
+  }
+
+  const m = resolved.skill.metadata;
   log.raw(`ID:              ${m.id}`);
+  log.raw(`Source:          ${resolved.source}`);
   log.raw(`Title:           ${m.title}`);
   log.raw(`Description:     ${m.description}`);
   log.raw(`Target agents:   ${m.target_agents.join(', ') || '(any)'}`);
@@ -58,28 +127,47 @@ function runSkillShow(skillId: string): void {
   }
   console.log();
   log.raw('--- Prompt preview (first 20 lines) ---');
-  const preview = skill.body.split('\n').slice(0, 20).join('\n');
+  const preview = resolved.skill.body.split('\n').slice(0, 20).join('\n');
   log.raw(preview);
   console.log();
   log.info(`Render:  repoblackbox skill use ${skillId} --var ...`);
   console.log();
 }
 
-function runSkillUse(
-  skillId: string,
-  options: { var?: string[]; output?: string },
-): void {
-  let skill;
+// ── skill use ───────────────────────────────────────────────────────
+
+interface UseOptions {
+  var?: string[];
+  output?: string;
+  builtIn?: boolean;
+  local?: boolean;
+  skillsDir?: string;
+}
+
+function runSkillUse(skillId: string, options: UseOptions): void {
+  const source: SkillSource = options.builtIn ? 'built-in' : options.local ? 'local' : 'auto';
+  let resolved;
   try {
-    skill = loadSkill(skillId);
+    resolved = resolveSkill(skillId, source, options.skillsDir);
   } catch (e) {
     log.error(`Invalid skill file: ${(e as Error).message}`);
     process.exit(1);
   }
-  if (!skill) {
-    log.error(`Unknown skill: ${skillId}`);
-    log.info(`Available: ${listSkillIds().join(', ') || '(none)'}`);
+
+  if (!resolved) {
+    const searchedIn = options.builtIn
+      ? 'built-in skills'
+      : options.local
+      ? `local skills (${getLocalSkillsDir(options.skillsDir)})`
+      : 'local + built-in skills';
+    log.error(`Skill "${skillId}" not found in ${searchedIn}.`);
+    log.info('List available skills: repoblackbox skill list');
+    if (!options.local) log.info('Create a local skill: repoblackbox skill init');
     process.exit(1);
+  }
+
+  if (resolved.isOverride) {
+    log.warn(`Using local skill override: ${skillId}`);
   }
 
   let vars: Record<string, string>;
@@ -90,7 +178,7 @@ function runSkillUse(
     process.exit(1);
   }
 
-  const missing = findMissingRequired(skill.metadata.required_variables, vars);
+  const missing = findMissingRequired(resolved.skill.metadata.required_variables, vars);
   if (missing.length > 0) {
     log.error(`Missing required variables: ${missing.join(', ')}`);
     log.info('Example:');
@@ -99,7 +187,7 @@ function runSkillUse(
     process.exit(1);
   }
 
-  const rendered = renderSkill(skill, vars);
+  const rendered = renderSkill(resolved.skill, vars);
 
   if (options.output) {
     ensureDir(path.dirname(path.resolve(options.output)));
@@ -111,20 +199,50 @@ function runSkillUse(
   }
 }
 
+// ── Commander registration ──────────────────────────────────────────
+
 export function registerSkillCommand(program: Command): void {
   const skill = program
     .command('skill')
-    .description('Agent Skill Packs — copy-paste workflow prompts for AI coding agents');
+    .description(
+      'Agent Skill Packs — copy-paste workflow prompts for AI coding agents',
+    );
+
+  skill
+    .command('init')
+    .description('Create local skill directory and example skill')
+    .option('-f, --force', 'Overwrite existing example-custom-skill.md')
+    .option('--skills-dir <path>', 'Custom local skill directory path')
+    .action((opts: { force?: boolean; skillsDir?: string }) =>
+      runSkillInit({ force: opts.force, customDir: opts.skillsDir }),
+    );
 
   skill
     .command('list')
-    .description('List available skills')
-    .action(() => runSkillList());
+    .description('List built-in and/or local skills')
+    .option('--built-in', 'Show only built-in skills')
+    .option('--local', 'Show only local skills')
+    .option('--all', 'Show built-in and local skills')
+    .option('--skills-dir <path>', 'Custom local skill directory path')
+    .action(
+      (opts: {
+        builtIn?: boolean;
+        local?: boolean;
+        all?: boolean;
+        skillsDir?: string;
+      }) => runSkillList(opts),
+    );
 
   skill
     .command('show <skill>')
     .description('Show skill metadata and prompt preview')
-    .action((id: string) => runSkillShow(id));
+    .option('--built-in', 'Only search built-in skills')
+    .option('--local', 'Only search local skills')
+    .option('--skills-dir <path>', 'Custom local skill directory path')
+    .action(
+      (id: string, opts: { builtIn?: boolean; local?: boolean; skillsDir?: string }) =>
+        runSkillShow(id, opts),
+    );
 
   skill
     .command('use <skill>')
@@ -139,7 +257,19 @@ export function registerSkillCommand(program: Command): void {
       [] as string[],
     )
     .option('-o, --output <file>', 'write rendered prompt to file instead of stdout')
-    .action((id: string, opts: { var: string[]; output?: string }) =>
-      runSkillUse(id, opts),
+    .option('--built-in', 'Only search built-in skills')
+    .option('--local', 'Only search local skills')
+    .option('--skills-dir <path>', 'Custom local skill directory path')
+    .action(
+      (
+        id: string,
+        opts: {
+          var: string[];
+          output?: string;
+          builtIn?: boolean;
+          local?: boolean;
+          skillsDir?: string;
+        },
+      ) => runSkillUse(id, opts),
     );
 }

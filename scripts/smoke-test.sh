@@ -16,7 +16,7 @@ trap cleanup EXIT
 
 echo ""
 echo "══════════════════════════════════════════════"
-echo "  RepoBlackbox Smoke Test  (v0.3.1)"
+echo "  RepoBlackbox Smoke Test  (v0.4.0)"
 echo "══════════════════════════════════════════════"
 
 # ── 1. Setup ──────────────────────────────────────
@@ -140,10 +140,10 @@ $RBB init --force > /dev/null
 pass "init --force: idempotent"
 
 # ── 10. CLI version ───────────────────────────────
-section "10. CLI version reports 0.3.1"
+section "10. CLI version reports 0.4.0"
 VERSION_OUT="$($RBB --version)"
-[ "$VERSION_OUT" = "0.3.1" ] || fail "version is '$VERSION_OUT', expected '0.3.1'"
-pass "version: 0.3.1"
+[ "$VERSION_OUT" = "0.4.0" ] || fail "version is '$VERSION_OUT', expected '0.4.0'"
+pass "version: 0.4.0"
 
 # ── 11. bench list ─────────────────────────────────
 section "11. bench list shows all 5 tasks"
@@ -253,6 +253,83 @@ section "21. skill use missing required variable exits non-zero"
 $RBB skill use github-release-polish --var project_path=/tmp/x > /dev/null 2>&1 \
   && fail "missing required vars should exit non-zero" || true
 pass "skill use: missing required variable exits non-zero"
+
+# ── 22. skill init in temp project ─────────────────
+section "22. skill init creates local skill directory"
+SKILL_INIT_DIR="/tmp/rbb-skill-init-$$"
+mkdir -p "$SKILL_INIT_DIR"
+( cd "$SKILL_INIT_DIR" && $RBB skill init > /dev/null 2>&1 )
+[ -d "$SKILL_INIT_DIR/.repoblackbox/skills" ] \
+  || fail "skill init: .repoblackbox/skills/ not created"
+[ -f "$SKILL_INIT_DIR/.repoblackbox/skills/example-custom-skill.md" ] \
+  || fail "skill init: example-custom-skill.md not created"
+pass "skill init: directory and example file created"
+
+# ── 23. skill list --local shows example skill ─────
+section "23. skill list --local shows example-custom-skill"
+LOCAL_LIST="$( cd "$SKILL_INIT_DIR" && $RBB skill list --local 2>&1 )"
+echo "$LOCAL_LIST" | grep -q "example-custom-skill" \
+  || fail "skill list --local missing example-custom-skill"
+pass "skill list --local: example-custom-skill found"
+
+# ── 24. skill list --built-in shows built-in skills ─
+section "24. skill list --built-in shows built-in skills"
+BUILTIN_LIST="$( cd "$SKILL_INIT_DIR" && $RBB skill list --built-in 2>&1 )"
+echo "$BUILTIN_LIST" | grep -q "github-release-polish" \
+  || fail "skill list --built-in: missing github-release-polish"
+echo "$BUILTIN_LIST" | grep -q "example-custom-skill" && fail "skill list --built-in: should not show local skill" || true
+pass "skill list --built-in: shows built-in, not local"
+
+# ── 25. skill list --all shows both ─────────────────
+section "25. skill list --all shows built-in and local"
+ALL_LIST="$( cd "$SKILL_INIT_DIR" && $RBB skill list --all 2>&1 )"
+echo "$ALL_LIST" | grep -q "github-release-polish" \
+  || fail "skill list --all: missing built-in github-release-polish"
+echo "$ALL_LIST" | grep -q "example-custom-skill" \
+  || fail "skill list --all: missing local example-custom-skill"
+pass "skill list --all: both built-in and local shown"
+
+# ── 26. skill show --local works ────────────────────
+section "26. skill show example-custom-skill --local"
+SHOW_LOCAL="$( cd "$SKILL_INIT_DIR" && $RBB skill show example-custom-skill --local 2>&1 )"
+echo "$SHOW_LOCAL" | grep -qi "Example Custom Skill" \
+  || fail "skill show --local: missing title"
+echo "$SHOW_LOCAL" | grep -qi "Required vars" \
+  || fail "skill show --local: missing Required vars"
+pass "skill show --local: metadata displayed"
+
+# ── 27. skill use --local renders variables ─────────
+section "27. skill use example-custom-skill --local renders variables"
+USE_LOCAL="$( cd "$SKILL_INIT_DIR" && $RBB skill use example-custom-skill --local \
+  --var project_path=/tmp/myrepo \
+  --var task='Refactor the hero section' 2>&1 )"
+echo "$USE_LOCAL" | grep -q "/tmp/myrepo" \
+  || fail "skill use --local: project_path not substituted"
+echo "$USE_LOCAL" | grep -q "Refactor the hero section" \
+  || fail "skill use --local: task not substituted"
+pass "skill use --local: variables substituted correctly"
+
+# ── 28. skill use --local --output writes file ──────
+section "28. skill use --local --output writes to file"
+LOCAL_OUT_FILE="/tmp/rbb-local-skill-out-$$.md"
+( cd "$SKILL_INIT_DIR" && $RBB skill use example-custom-skill --local \
+  --var project_path=/tmp/myrepo \
+  --var task='Test task' \
+  --output "$LOCAL_OUT_FILE" > /dev/null 2>&1 )
+[ -f "$LOCAL_OUT_FILE" ] || fail "skill use --local --output: file not created"
+grep -q "/tmp/myrepo" "$LOCAL_OUT_FILE" || fail "skill use --local --output: variable not in file"
+rm -f "$LOCAL_OUT_FILE"
+pass "skill use --local --output: file written with substituted variables"
+
+# ── 29. skill init --force overwrites example ───────
+section "29. skill init --force overwrites example skill"
+( cd "$SKILL_INIT_DIR" && $RBB skill init --force > /dev/null 2>&1 )
+[ -f "$SKILL_INIT_DIR/.repoblackbox/skills/example-custom-skill.md" ] \
+  || fail "skill init --force: example file missing after force"
+pass "skill init --force: idempotent"
+
+# cleanup
+rm -rf "$SKILL_INIT_DIR"
 
 echo ""
 echo "══════════════════════════════════════════════"

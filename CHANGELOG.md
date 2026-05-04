@@ -7,6 +7,31 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [0.4.0] — 2026-05-05
+
+### Added
+- **Custom User Skill Directories** — local skill packs in `.repoblackbox/skills/`
+- `repoblackbox skill init` — create local skill directory and example skill file
+- `repoblackbox skill list --local` — show only local skills
+- `repoblackbox skill list --built-in` — show only built-in skills
+- `repoblackbox skill list --all` — show both
+- `--local` and `--built-in` source flags on `skill show` and `skill use`
+- `--skills-dir <path>` flag on list/show/use for custom directories
+- Local-first skill resolution: local overrides built-in with same id
+- Override detection: prints "Using local skill override: <skill>" when relevant
+- `docs/custom-skills.md` — full reference for local skills, format, resolution, and `--skills-dir`
+
+### Changed
+- `skill list` default output now shows Built-in skills and Local skills sections separately
+- `package.json` version bumped to 0.4.0
+
+### Notes
+- All v0.1–v0.3 behavior preserved unchanged
+- No external API calls, no telemetry
+- `skill init` never deletes existing user skill files (`--force` only overwrites the example)
+
+---
+
 ## [0.3.1] — 2026-05-04
 
 ### Changed

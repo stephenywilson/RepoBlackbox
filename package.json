@@ -1,6 +1,6 @@
 {
   "name": "repoblackbox",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "A lightweight safety, evaluation, and workflow layer for AI coding agents — Claude Code, Codex, Cursor, Copilot, and more.",
   "keywords": ["ai", "coding", "agent", "safety", "evaluation", "benchmark", "workflow", "skill", "prompt", "claude", "codex", "cursor", "cli", "devtools", "repo-safety", "agentic-coding", "ai-devtools"],
   "author": "Catalayer AI",
