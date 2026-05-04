@@ -1,8 +1,8 @@
 {
   "name": "repoblackbox",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A lightweight safety layer for AI coding agents — Claude Code, Codex, Cursor, Copilot, and more.",
-  "keywords": ["ai", "coding", "agent", "safety", "claude", "codex", "cursor", "cli", "devtools", "workflow"],
+  "keywords": ["ai", "coding", "agent", "safety", "claude", "codex", "cursor", "cli", "devtools", "workflow", "repo-safety", "agentic-coding", "ai-devtools"],
   "author": "Catalayer AI",
   "license": "Apache-2.0",
   "repository": {

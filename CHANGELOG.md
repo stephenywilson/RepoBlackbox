@@ -7,6 +7,21 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [0.1.3] — 2026-05-04
+
+### Fixed
+- Standardized all README Markdown table separators to `|---|---|` for consistent GitHub rendering
+- Updated Quick Start: removed stale "npm installation will be added after first npm release" text
+- Removed outdated `> After npm release` note from README
+- Reformatted GitHub Actions `ci.yml`: removed unnecessary quotes from `cache: npm`
+
+### Changed
+- `package.json` keywords expanded with `repo-safety`, `agentic-coding`, `ai-devtools`
+- `package.json` version bumped to 0.1.3
+- Quick Start restructured with cleaner Install and Development install sections
+
+---
+
 ## [0.1.2] — 2026-05-04
 
 ### Added

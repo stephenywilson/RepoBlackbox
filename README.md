@@ -129,17 +129,12 @@ Without boundaries, even a well-intentioned agent can cause cascading damage. No
 
 ## Quick Start
 
-RepoBlackbox is currently available from source. npm installation will be added after the first npm release.
-
-### Install from source
+### Install
 
 ```bash
 git clone https://github.com/stephenywilson/RepoBlackbox
 cd RepoBlackbox
-npm install
-npm run build
-npm link
-repoblackbox --help
+npm install && npm run build && npm link
 ```
 
 ### Use in your project
@@ -151,7 +146,7 @@ repoblackbox init
 
 repoblackbox scope \
   --task "Refactor homepage hero" \
-  --allow "src/components/home/**,src/styles/theme.css,src/styles/tokens.css" \
+  --allow "src/components/home/**,src/styles/tokens.css" \
   --forbid ".env,package.json,src/lib/auth/**" \
   --success "Hero renders correctly, navigation unchanged, build passes"
 
@@ -163,7 +158,17 @@ repoblackbox audit
 repoblackbox report
 ```
 
-> After npm release: `npm install -g repoblackbox`
+### Development install
+
+To work on RepoBlackbox itself:
+
+```bash
+git clone https://github.com/stephenywilson/RepoBlackbox
+cd RepoBlackbox
+npm install
+npm run build
+npm run smoke
+```
 
 ---
 
@@ -308,7 +313,7 @@ repoblackbox report
 **What the audit catches automatically:**
 
 | Change | Detection |
-| --- | --- |
+|---|---|
 | File matches `--forbid` pattern | Scope violation → **HIGH** |
 | File outside `--allow` patterns | Out-of-scope warning → **MEDIUM** |
 | `package.json` / lock files changed | Dependency flag → **MEDIUM** |
@@ -348,7 +353,7 @@ The entire workflow — scope, snapshot, audit, report — takes under 10 second
 By default, RepoBlackbox flags changes to:
 
 | Category | Files |
-| --- | --- |
+|---|---|
 | Secrets | `.env`, `.env.*` |
 | Dependencies | `package.json`, lock files |
 | Deployment | `Dockerfile`, `vercel.json`, `netlify.toml` |
@@ -366,7 +371,7 @@ You can customize the protected list in `.repoblackbox/protected-files.json`.
 ## Risk Levels
 
 | Level | Meaning |
-| --- | --- |
+|---|---|
 | `LOW` | Only allowed, normal files changed |
 | `MEDIUM` | Dependency, package, or config files changed |
 | `HIGH` | Env, auth, billing, API, deployment, or database files touched — or many files deleted — or any file matches a `--forbid` pattern |
