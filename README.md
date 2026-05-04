@@ -1,13 +1,50 @@
-# RepoBlackbox by Catalayer
+# RepoBlackbox
 
-**AI coding agents move fast. Your repo needs a blackbox.**
+**Stop AI coding agents from breaking your repo.**
 
-RepoBlackbox is a lightweight safety layer for Claude Code, Codex, Cursor, Copilot, and other AI coding agents.
+[![CI](https://github.com/stephenywilson/RepoBlackbox/actions/workflows/ci.yml/badge.svg)](https://github.com/stephenywilson/RepoBlackbox/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](package.json)
 
-Before the agent edits your repo, define the task scope and capture a snapshot.  
-After the agent edits your repo, audit what changed and generate a review report.
+RepoBlackbox is a lightweight CLI safety layer for Claude Code, Codex, Cursor, Copilot, and other AI coding agents. It wraps each AI coding session with scope definition, a repo snapshot, a post-run audit, and a Markdown report — so you always know exactly what the agent changed and whether it stayed within bounds.
 
-![RepoBlackbox terminal demo](docs/assets/repoblackbox-demo.svg)
+It does not replace Git. It adds an AI-agent-specific workflow on top of Git so you catch scope violations and risky edits before you commit.
+
+*By [Catalayer](https://catalayer.com)*
+
+![RepoBlackbox terminal demo](docs/assets/terminal-demo.svg)
+
+---
+
+## What RepoBlackbox catches
+
+| Agent behavior | Detection |
+|---|---|
+| Edits `package.json` during a UI-only task | Scope violation → **HIGH** |
+| Touches `.env` or `.env.*` | Sensitive file flag → **HIGH** (content never read) |
+| Modifies files outside `--allow` patterns | Out-of-scope warning → **MEDIUM** |
+| Changes auth, billing, API, or database files | Built-in HIGH risk |
+| Deletes more than 10 files | Bulk deletion warning → **HIGH** |
+| Only edits declared allowed files | **LOW** |
+
+---
+
+## Quick demo
+
+```bash
+# 1. Define scope — what the agent may and may not touch
+repoblackbox scope \
+  --task "Refactor homepage hero" \
+  --allow "src/components/home/**,src/styles/tokens.css" \
+  --forbid ".env,package.json,src/lib/auth/**"
+
+# 2. Snapshot before the agent starts
+repoblackbox snapshot "before claude task"
+
+# 3. Run Claude Code / Codex / Cursor — then audit
+repoblackbox audit    # flags scope violations and risk level
+repoblackbox report   # saves .repoblackbox/reports/latest-report.md
+```
 
 ---
 
@@ -17,8 +54,8 @@ RepoBlackbox is a CLI developer tool that wraps your AI coding workflow with a s
 
 1. **Scope** — define what the agent is allowed to touch before it starts
 2. **Snapshot** — capture the exact state of your repo before any changes
-3. **Audit** — compare after the agent finishes, flag risky edits
-4. **Report** — generate a clean Markdown review you can share or file
+3. **Audit** — compare after the agent finishes, flag risky edits and scope violations
+4. **Report** — generate a clean Markdown review you can share, file, or commit
 
 It does not interfere with your AI agent's capabilities. It adds the discipline that production development requires.
 
@@ -338,31 +375,35 @@ You can customize the protected list in `.repoblackbox/protected-files.json`.
 
 ## What v0.1.x Does
 
-- `init` — create config and safety documents
-- `scope` — define task boundaries (interactive or flag-based); saves machine-readable JSON for audit
-- `snapshot` — SHA-256 hash-based repo state capture; sensitive files never read
-- `audit` — diff vs snapshot, classify risk, detect scope violations and out-of-scope changes
-- `report` — Markdown AI coding run report with scope violations, review checklist, and next steps
+| Command | What it does |
+|---|---|
+| `repoblackbox init` | Create `.repoblackbox/` config and four agent safety documents |
+| `repoblackbox scope` | Define task boundaries (interactive or `--allow`/`--forbid` flags); saves JSON for audit |
+| `repoblackbox snapshot` | SHA-256 hash every non-sensitive file; record `.env` metadata without reading content |
+| `repoblackbox audit` | Diff current state vs snapshot; detect scope violations, out-of-scope changes, risk level |
+| `repoblackbox report` | Write Markdown review report with scope violations, checklist, and suggested next steps |
 
-What v0.1 does **not** do:
+**v0.1.x does not do:**
 
-- No rollback (planned for v0.2 — rollback done poorly causes data loss)
-- No GitHub PR integration (v0.2)
-- No CI mode / exit codes (v0.2)
-- No web UI (v0.3)
-- Does not read `.env` file content (by design — forever)
+| Feature | Status |
+|---|---|
+| Rollback | Planned v0.2 (safe rollback is non-trivial) |
+| GitHub PR comments | Planned v0.2 |
+| CI exit-code gate | Planned v0.2 |
+| Read `.env` content | Never — by design |
 
 ---
 
 ## Roadmap
 
-### v0.1.1 (current)
+### v0.1.2 (current)
 - `init`, `scope`, `snapshot`, `audit`, `report`
 - SHA-256 file hash comparison
 - Risk level classification: LOW / MEDIUM / HIGH
-- Custom forbidden pattern matching (`--forbid`) with scope violation detection
-- Out-of-scope change warnings when `--allow` is declared
-- Markdown and JSON reports
+- Forbidden pattern matching (`--forbid`) with scope violation detection → HIGH
+- Out-of-scope change warnings when `--allow` is declared → MEDIUM
+- Markdown and JSON audit reports
+- GitHub Actions CI across Node 18 / 20 / 22
 - Smoke test suite
 
 ### v0.2
@@ -401,6 +442,7 @@ The report is your flight log.
 | [docs/example-workflow.md](docs/example-workflow.md) | Full step-by-step workflow with real command output |
 | [docs/risk-model.md](docs/risk-model.md) | How LOW / MEDIUM / HIGH are determined, scope violations, out-of-scope |
 | [docs/ai-agent-rules.md](docs/ai-agent-rules.md) | How the four safety documents work, Claude Code / Cursor / Codex integration |
+| [examples/unsafe-agent-run/](examples/unsafe-agent-run/) | End-to-end example: agent touches forbidden file, audit flags HIGH |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, build, smoke test, contribution guidelines |
 | [SECURITY.md](SECURITY.md) | What RepoBlackbox does and does not do with your files |

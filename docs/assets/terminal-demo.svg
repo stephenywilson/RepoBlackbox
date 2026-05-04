@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" role="img" aria-label="RepoBlackbox terminal demo">
+  <title>RepoBlackbox terminal demo</title>
+
+  <!-- Canvas background -->
+  <rect width="960" height="520" fill="#0d1117"/>
+
+  <!-- Card -->
+  <rect x="10" y="10" width="940" height="500" rx="10" fill="#161b22"/>
+
+  <!-- Title bar: rx=10 rect + square-off cover (no clipPath — GitHub strips defs) -->
+  <rect x="10" y="10" width="940" height="46" rx="10" fill="#21262d"/>
+  <rect x="10" y="46" width="940" height="10" fill="#21262d"/>
+
+  <!-- Divider -->
+  <rect x="10" y="55" width="940" height="1" fill="#30363d"/>
+
+  <!-- Card border -->
+  <rect x="10" y="10" width="940" height="500" rx="10" fill="none" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Window dots -->
+  <circle cx="37" cy="33" r="6" fill="#ff5f57"/>
+  <circle cx="58" cy="33" r="6" fill="#febc2e"/>
+  <circle cx="79" cy="33" r="6" fill="#28c840"/>
+
+  <!-- Title -->
+  <text x="480" y="33" font-family="monospace" font-size="12" fill="#8b949e" text-anchor="middle" dominant-baseline="middle">repoblackbox — AI coding agent safety</text>
+
+  <!-- ── scope ────────────────────────────────────────────────── -->
+  <text x="32" y="86"  font-family="monospace" font-size="14"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox scope --task </tspan><tspan fill="#a5d6ff">"Refactor homepage hero"</tspan><tspan fill="#c9d1d9"> \</tspan></text>
+  <text x="32" y="106" font-family="monospace" font-size="14"><tspan fill="#c9d1d9">    --allow </tspan><tspan fill="#a5d6ff">"src/components/home/**,src/styles/tokens.css"</tspan><tspan fill="#c9d1d9"> \</tspan></text>
+  <text x="32" y="126" font-family="monospace" font-size="14"><tspan fill="#c9d1d9">    --forbid </tspan><tspan fill="#a5d6ff">".env,package.json,src/lib/auth/**"</tspan></text>
+  <text x="32" y="146" font-family="monospace" font-size="14"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Scope saved — forbidden: 3 pattern(s)  allowed: 2 pattern(s)</tspan></text>
+
+  <!-- ── snapshot ─────────────────────────────────────────────── -->
+  <text x="32" y="182" font-family="monospace" font-size="14"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox snapshot </tspan><tspan fill="#a5d6ff">"before claude task"</tspan></text>
+  <text x="32" y="202" font-family="monospace" font-size="14"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Recorded 67 files, 2 sensitive files (no content read)</tspan></text>
+  <text x="32" y="222" font-family="monospace" font-size="14"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Snapshot saved</tspan></text>
+
+  <!-- ── audit ────────────────────────────────────────────────── -->
+  <text x="32" y="258" font-family="monospace" font-size="14"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox audit</tspan></text>
+
+  <text x="32" y="288" font-family="monospace" font-size="14" font-weight="bold"><tspan fill="#c9d1d9">  Changes</tspan></text>
+  <text x="32" y="308" font-family="monospace" font-size="14"><tspan fill="#8b949e">    Modified </tspan><tspan fill="#3fb950">(2)</tspan><tspan fill="#8b949e">:  src/components/home/Hero.tsx</tspan></text>
+  <text x="32" y="328" font-family="monospace" font-size="14"><tspan fill="#8b949e">                  src/styles/tokens.css</tspan></text>
+  <text x="32" y="348" font-family="monospace" font-size="14"><tspan fill="#8b949e">    Modified </tspan><tspan fill="#f85149">(1)</tspan><tspan fill="#8b949e">:  </tspan><tspan fill="#f85149">package.json</tspan><tspan fill="#8b949e">  ← forbidden</tspan></text>
+
+  <text x="32" y="378" font-family="monospace" font-size="14"><tspan fill="#d29922">  ⚠</tspan><tspan fill="#c9d1d9">  Scope violation: </tspan><tspan fill="#f85149">package.json</tspan><tspan fill="#c9d1d9"> matches forbidden pattern</tspan></text>
+  <text x="32" y="406" font-family="monospace" font-size="14"><tspan fill="#c9d1d9">  Risk Level: </tspan><tspan fill="#f85149" font-weight="bold">HIGH</tspan><tspan fill="#8b949e">  — stop and review before continuing</tspan></text>
+
+  <!-- ── report ───────────────────────────────────────────────── -->
+  <text x="32" y="444" font-family="monospace" font-size="14"><tspan fill="#58a6ff">$</tspan><tspan fill="#c9d1d9"> repoblackbox report</tspan></text>
+  <text x="32" y="464" font-family="monospace" font-size="14"><tspan fill="#3fb950">  ✔</tspan><tspan fill="#8b949e"> Report saved: </tspan><tspan fill="#79c0ff">.repoblackbox/reports/latest-report.md</tspan></text>
+  <text x="32" y="484" font-family="monospace" font-size="14"><tspan fill="#d29922">  ⚠</tspan><tspan fill="#8b949e">  HIGH risk — manually review before committing.</tspan></text>
+
+</svg>

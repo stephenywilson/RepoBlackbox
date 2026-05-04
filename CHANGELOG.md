@@ -7,6 +7,26 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [0.1.2] — 2026-05-04
+
+### Added
+- GitHub Actions CI workflow (Node 18, 20, 22)
+- `examples/unsafe-agent-run/` — concrete example of scope violation caught by audit
+- `docs/assets/terminal-demo.svg` — improved terminal demo for README
+- `package.json` fields: `repository`, `homepage`, `bugs`
+
+### Changed
+- README: sharper opening headline and tagline
+- README: added CI badge, License badge, Node badge
+- README: new "What RepoBlackbox catches" table near the top
+- README: added "Quick demo" code block near the top
+- README: "What v0.1.x Does" converted to structured tables
+- README: roadmap updated to reflect v0.1.2 as current release
+- README: Documentation table includes examples link
+- `package.json`: `keywords` expanded; version bumped to 0.1.2
+
+---
+
 ## [0.1.1] — 2025-05-03
 
 ### Added

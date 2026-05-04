@@ -16,7 +16,7 @@ trap cleanup EXIT
 
 echo ""
 echo "══════════════════════════════════════════════"
-echo "  RepoBlackbox Smoke Test  (v0.1.1)"
+echo "  RepoBlackbox Smoke Test  (v0.1.2)"
 echo "══════════════════════════════════════════════"
 
 # ── 1. Setup ──────────────────────────────────────
