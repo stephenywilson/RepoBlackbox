@@ -40,7 +40,34 @@ Code, Codex, Cursor, Copilot, and other AI coding agents.
 
 ## Quick Start
 
-RepoBlackbox is not yet published on npm. Install from source:
+```bash
+npm install -g repoblackbox
+repoblackbox --help
+```
+
+### Use in your project
+
+```bash
+cd /path/to/your/project
+
+repoblackbox init
+
+repoblackbox scope \
+  --task "Refactor homepage hero" \
+  --allow "src/components/home/**,src/styles/tokens.css" \
+  --forbid ".env,package.json,src/lib/auth/**"
+
+repoblackbox snapshot "before claude task"
+
+# Run Claude Code, Codex, or Cursor
+
+repoblackbox audit
+repoblackbox report
+```
+
+### Development install
+
+To build from source or contribute:
 
 ```bash
 git clone https://github.com/stephenywilson/RepoBlackbox
@@ -50,8 +77,6 @@ npm run build
 npm link
 repoblackbox --help
 ```
-
-> npm installation will be available after the first npm release.
 
 ---
 

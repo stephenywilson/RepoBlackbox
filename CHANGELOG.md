@@ -7,6 +7,16 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [0.3.1] — 2026-05-04
+
+### Changed
+- README Quick Start now uses `npm install -g repoblackbox` as the primary install path
+- Moved source installation into a separate Development install section
+- Removed outdated "npm will be available after first npm release" note
+- No CLI behavior changes
+
+---
+
 ## [0.3.0] — 2026-05-04
 
 ### Added

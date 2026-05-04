@@ -16,7 +16,7 @@ trap cleanup EXIT
 
 echo ""
 echo "══════════════════════════════════════════════"
-echo "  RepoBlackbox Smoke Test  (v0.3.0)"
+echo "  RepoBlackbox Smoke Test  (v0.3.1)"
 echo "══════════════════════════════════════════════"
 
 # ── 1. Setup ──────────────────────────────────────
@@ -140,10 +140,10 @@ $RBB init --force > /dev/null
 pass "init --force: idempotent"
 
 # ── 10. CLI version ───────────────────────────────
-section "10. CLI version reports 0.3.0"
+section "10. CLI version reports 0.3.1"
 VERSION_OUT="$($RBB --version)"
-[ "$VERSION_OUT" = "0.3.0" ] || fail "version is '$VERSION_OUT', expected '0.3.0'"
-pass "version: 0.3.0"
+[ "$VERSION_OUT" = "0.3.1" ] || fail "version is '$VERSION_OUT', expected '0.3.1'"
+pass "version: 0.3.1"
 
 # ── 11. bench list ─────────────────────────────────
 section "11. bench list shows all 5 tasks"
