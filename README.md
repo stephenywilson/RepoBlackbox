@@ -406,8 +406,8 @@ After finishing, list every file you changed and why.
 
 ## Important Clarifications
 
-**RepoBlackbox does not perform rollback.**  
-Rollback is planned for v0.2. Automated rollback done poorly can cause data loss. In v0.1, use `git checkout <file>` or `git reset` manually after reviewing the audit.
+**RepoBlackbox does not perform rollback yet.**  
+Safe rollback is planned for a future release. Automated rollback done poorly can cause data loss, so current versions focus on scope, snapshot, audit, report, bench, and skill workflows. Use `git checkout <file>` or `git reset` manually after reviewing the audit.
 
 **RepoBlackbox does not read `.env` file content.**  
 For sensitive files like `.env` and `.env.*`, RepoBlackbox records only: whether the file exists, its size, and its modification time. It never reads or hashes the content. This is by design.
