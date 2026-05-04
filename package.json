@@ -14,7 +14,7 @@
     "url": "https://github.com/stephenywilson/RepoBlackbox/issues"
   },
   "bin": {
-    "repoblackbox": "./dist/cli.js"
+    "repoblackbox": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
