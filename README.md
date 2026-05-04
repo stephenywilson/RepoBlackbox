@@ -132,9 +132,7 @@ Without boundaries, even a well-intentioned agent can cause cascading damage. No
 ### Install
 
 ```bash
-git clone https://github.com/stephenywilson/RepoBlackbox
-cd RepoBlackbox
-npm install && npm run build && npm link
+npm install -g repoblackbox
 ```
 
 ### Use in your project
@@ -147,8 +145,7 @@ repoblackbox init
 repoblackbox scope \
   --task "Refactor homepage hero" \
   --allow "src/components/home/**,src/styles/tokens.css" \
-  --forbid ".env,package.json,src/lib/auth/**" \
-  --success "Hero renders correctly, navigation unchanged, build passes"
+  --forbid ".env,package.json,src/lib/auth/**"
 
 repoblackbox snapshot "before claude task"
 
@@ -160,14 +157,13 @@ repoblackbox report
 
 ### Development install
 
-To work on RepoBlackbox itself:
+To build and run RepoBlackbox from source:
 
 ```bash
 git clone https://github.com/stephenywilson/RepoBlackbox
 cd RepoBlackbox
-npm install
-npm run build
-npm run smoke
+npm install && npm run build && npm link
+repoblackbox --help
 ```
 
 ---
