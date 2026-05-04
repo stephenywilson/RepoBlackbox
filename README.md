@@ -439,10 +439,10 @@ The report is your flight log.
 
 | Doc | Description |
 |---|---|
-| [docs/example-workflow.md](docs/example-workflow.md) | Full step-by-step workflow with real command output |
-| [docs/risk-model.md](docs/risk-model.md) | How LOW / MEDIUM / HIGH are determined, scope violations, out-of-scope |
-| [docs/ai-agent-rules.md](docs/ai-agent-rules.md) | How the four safety documents work, Claude Code / Cursor / Codex integration |
-| [examples/unsafe-agent-run/](examples/unsafe-agent-run/) | End-to-end example: agent touches forbidden file, audit flags HIGH |
+| [docs/example-workflow.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/example-workflow.md) | Full step-by-step workflow with real command output |
+| [docs/risk-model.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/risk-model.md) | How LOW / MEDIUM / HIGH are determined, scope violations, out-of-scope |
+| [docs/ai-agent-rules.md](https://github.com/stephenywilson/RepoBlackbox/blob/main/docs/ai-agent-rules.md) | How the four safety documents work, Claude Code / Cursor / Codex integration |
+| [examples/unsafe-agent-run/](examples/unsafe-agent-run/README.md) | End-to-end example: agent touches forbidden file, audit flags HIGH |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, build, smoke test, contribution guidelines |
 | [SECURITY.md](SECURITY.md) | What RepoBlackbox does and does not do with your files |

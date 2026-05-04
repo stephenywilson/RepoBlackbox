@@ -37,6 +37,8 @@
   "files": [
     "dist",
     "templates",
+    "docs/assets/terminal-demo.svg",
+    "examples/unsafe-agent-run/README.md",
     "LICENSE",
     "README.md"
   ]
